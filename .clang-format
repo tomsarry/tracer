@@ -1,3 +1,10 @@
+BasedOnStyle: Google
 UseTab: Always
 IndentWidth: 4
 TabWidth: 4
+
+PointerAlignment: Left
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: true
+AlignOperands: true

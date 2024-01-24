@@ -1,4 +1,4 @@
 {
-    "editor.renderWhitespace": "boundary",
+    "editor.renderWhitespace": "selection",
     "cmake.configureOnOpen": true
 }
