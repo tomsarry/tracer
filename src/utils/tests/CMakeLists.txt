@@ -3,6 +3,7 @@ set(SOURCES main.cpp tst_vec3.cpp)
 add_executable(
 	tracer.utils.test
 	main.cpp
+	tst_ray.cpp
 	tst_vec3.cpp
 )
 target_link_libraries(
