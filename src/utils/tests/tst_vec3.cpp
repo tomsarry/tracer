@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "vec3.h"
+#include "utils/vec3.h"
 
 TEST(vec3, shouldCreateDefault) {
 	const vec3 v;

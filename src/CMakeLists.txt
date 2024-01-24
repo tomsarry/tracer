@@ -1,3 +1,14 @@
 set(BINARY ${CMAKE_PROJECT_NAME})
 
-add_executable(tracer main.cpp vec3.h)
+enable_testing()
+
+add_executable(tracer main.cpp)
+
+set_target_properties(tracer PROPERTIES LINKER_LANGUAGE CXX)
+
+
+add_subdirectory(utils)
+
+target_link_libraries(tracer PUBLIC
+	tracer.utils
+)
