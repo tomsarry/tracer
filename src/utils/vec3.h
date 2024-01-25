@@ -5,8 +5,10 @@
 #include <cmath>
 #include <iostream>
 
+#include "utils/random.h"
+
 class vec3 {
-  public:
+   public:
 	double e[3];
 
 	vec3() : e{0, 0, 0} {}
@@ -49,6 +51,16 @@ class vec3 {
 	double length_squared() const {
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
+
+	static vec3 random() {
+		return vec3(random_double(), random_double(), random_double());
+	}
+
+	static vec3 random(double min, double max) {
+		return vec3(
+			random_double(min, max), random_double(min, max),
+			random_double(min, max));
+	}
 };
 
 using point3 = vec3;
@@ -82,11 +94,39 @@ inline double dot(const vec3 &u, const vec3 &v) {
 }
 
 inline vec3 cross(const vec3 &u, const vec3 &v) {
-	return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-				u.e[2] * v.e[0] - u.e[0] * v.e[2],
-				u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+	return vec3(
+		u.e[1] * v.e[2] - u.e[2] * v.e[1], u.e[2] * v.e[0] - u.e[0] * v.e[2],
+		u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
 inline vec3 unit_vector(vec3 v) { return v / v.length(); }
+
+inline vec3 random_in_unit_cube() { return vec3::random(-1, 1); }
+
+inline vec3 random_in_unit_sphere() {
+	while (true) {
+		auto p = random_in_unit_cube();
+		bool is_in_unit_sphere = p.length_squared() < 1;
+
+		if (is_in_unit_sphere) {
+			return p;
+		}
+	}
+}
+
+inline vec3 random_unit_vector() {
+	return unit_vector(random_in_unit_sphere());
+}
+
+inline vec3 random_on_hemisphere(const vec3 &normal) {
+	vec3 on_unit_sphere = random_unit_vector();
+	bool is_on_same_hemisphere = dot(on_unit_sphere, normal) > 0.0;
+
+	if (!is_on_same_hemisphere) {
+		on_unit_sphere = -on_unit_sphere;
+	}
+
+	return on_unit_sphere;
+}
 
 #endif
