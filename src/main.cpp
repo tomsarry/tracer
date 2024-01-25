@@ -6,6 +6,7 @@
 #include "objects/sphere.h"
 #include "utils/color.h"
 #include "utils/constants.h"
+#include "utils/interval.h"
 #include "utils/ray.h"
 #include "utils/vec3.h"
 
@@ -18,7 +19,7 @@ int getImageHeight(int width, double aspect_ratio) {
 
 color ray_color(const ray& r, const hittable& world) {
 	hit_record rec;
-	if (world.hit(r, 0, infinity, rec)) {
+	if (world.hit(r, interval(0, Constants::INF), rec)) {
 		return 0.5 * (rec.normal + color(1, 1, 1));
 	}
 

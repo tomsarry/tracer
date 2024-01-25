@@ -1,6 +1,7 @@
 set(SOURCES
     color.h
     constants.h
+    interval.h
     ray.h
     vec3.h
 )
