@@ -1,4 +1,5 @@
 set(SOURCES
+    camera.h
     color.h
     constants.h
     interval.h
