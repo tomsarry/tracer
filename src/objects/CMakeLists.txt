@@ -1,5 +1,6 @@
 set(SOURCES
     hittable.h
+    hittable_list.h
     sphere.h
 )
 
