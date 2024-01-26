@@ -4,6 +4,7 @@
 #include "materials/material.h"
 #include "objects/hittable.h"
 #include "utils/color.h"
+#include "utils/constants.h"
 #include "utils/random.h"
 #include "utils/vec3.h"
 
@@ -13,6 +14,11 @@ class camera {
 	int image_width = 100;		// Rendered image width in pixel count
 	int samples_per_pixel = 10;
 	int max_depth = 10;
+
+	double vertical_fov = 90;
+	point3 look_from = point3(0, 0, -1);
+	point3 look_at = point3(0, 0, 0);
+	vec3 vertical_up = vec3(0, 1, 0);
 
 	void render(const hittable& world) {
 		initialize();
@@ -41,26 +47,33 @@ class camera {
 	point3 pixel00_loc;
 	vec3 pixel_delta_u;
 	vec3 pixel_delta_v;
+	vec3 u, v, w;
 
 	void initialize() {
 		image_height = static_cast<int>(image_width / aspect_ratio);
 		image_height = (image_height < 1) ? 1 : image_height;
 
-		center = point3(0, 0, 0);
+		center = look_from;
 
-		const auto focal_length = 1.0;
-		const auto viewport_height = 2.0;
+		const auto focal_length = (look_from - look_at).length();
+		const auto theta = Constants::degress_to_radians(vertical_fov);
+		auto h = tan(theta / 2.0);
+		const auto viewport_height = 2.0 * h * focal_length;
 		const auto viewport_width =
 			viewport_height * (static_cast<double>(image_width) / image_height);
 
-		const auto viewport_u = vec3(viewport_width, 0, 0);
-		const auto viewport_v = vec3(0, -viewport_height, 0);
+		w = unit_vector(look_from - look_at);
+		u = unit_vector(cross(vertical_up, w));
+		v = cross(w, u);
+
+		const auto viewport_u = viewport_width * u;
+		const auto viewport_v = viewport_height * -v;
 
 		pixel_delta_u = viewport_u / image_width;
 		pixel_delta_v = viewport_v / image_height;
 
 		const auto viewport_upper_left =
-			center - vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+			center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
 		pixel00_loc =
 			viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 	}
