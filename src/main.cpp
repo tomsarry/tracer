@@ -1,4 +1,5 @@
 #include "materials/dielectric.h"
+#include "materials/iridescent.h"
 #include "materials/lambertian.h"
 #include "materials/metal.h"
 #include "objects/hittable_list.h"
@@ -11,8 +12,8 @@ int main() {
 
 	auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
 	auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-	auto material_left = std::make_shared<dielectric>(1.5);
-	auto material_right = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+	auto material_left = std::make_shared<iridescent>();
+	auto material_right = std::make_shared<iridescent>(true);
 
 	world.add(std::make_shared<sphere>(
 		point3(0.0, -100.5, -1.0), 100.0, material_ground));
@@ -28,11 +29,11 @@ int main() {
 	camera cam;
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 400;
-	cam.samples_per_pixel = 128;
+	cam.samples_per_pixel = 256;
 	cam.max_depth = 50;
 
 	cam.vertical_fov = 90;
-	cam.look_from = point3(-2, 2, 1);
+	cam.look_from = point3(0.5, 0.2, 1);
 	cam.look_at = point3(0, 0, -1);
 	cam.vertical_up = vec3(0, 1, 0);
 

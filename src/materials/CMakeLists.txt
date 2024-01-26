@@ -1,5 +1,6 @@
 set(SOURCES
     dielectric.h
+    iridescent.h
     lambertian.h
     material.h
     metal.h

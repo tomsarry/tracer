@@ -81,3 +81,9 @@ Adding new materials: dielectrics and hollow glass sphere.
 Improving the flexibility of the camera.
 
 ![18_improving_camera](./images/18_position.jpg)
+
+---
+
+Adding mate and shiny iridescent materials.
+
+![19_iridescent](./images/19_iridescent.jpg)
