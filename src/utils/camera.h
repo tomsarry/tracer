@@ -5,6 +5,7 @@
 #include "objects/hittable.h"
 #include "utils/color.h"
 #include "utils/constants.h"
+#include "utils/pixel_map.h"
 #include "utils/random.h"
 #include "utils/vec3.h"
 
@@ -12,6 +13,7 @@ class camera {
    public:
 	double aspect_ratio = 1.0;	// Ratio of image width over height
 	int image_width = 100;		// Rendered image width in pixel count
+	int image_height;
 	int samples_per_pixel = 10;
 	int max_depth = 10;
 
@@ -23,10 +25,9 @@ class camera {
 	double defocus_angle = 0;
 	double focus_dist = 10;
 
-	void render(const hittable& world) {
+	void render(const hittable& world, pixel_map& pixels) {
 		initialize();
 
-		std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 		for (int j = 0; j < image_height; ++j) {
 			std::clog << "\rScanlines remanaining: " << (image_height - j)
 					  << ' ' << std::flush;
@@ -37,7 +38,8 @@ class camera {
 					pixel_color += ray_color(r, max_depth, world);
 				}
 
-				write_color(std::cout, pixel_color, samples_per_pixel);
+				// write_color(std::cout, pixel_color, samples_per_pixel);
+				pixels[j][i] += pixel_color;
 			}
 		}
 
@@ -45,7 +47,6 @@ class camera {
 	}
 
    private:
-	int image_height;
 	point3 center;
 	point3 pixel00_loc;
 	vec3 pixel_delta_u;
@@ -55,8 +56,8 @@ class camera {
 	vec3 defocus_disk_v;
 
 	void initialize() {
-		image_height = static_cast<int>(image_width / aspect_ratio);
-		image_height = (image_height < 1) ? 1 : image_height;
+		// image_height = static_cast<int>(image_width / aspect_ratio);
+		// image_height = (image_height < 1) ? 1 : image_height;
 
 		center = look_from;
 

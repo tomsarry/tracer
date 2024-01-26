@@ -3,6 +3,7 @@ set(SOURCES
     color.h
     constants.h
     interval.h
+    pixel_map.h
     random.h
     ray.h
     vec3.h
