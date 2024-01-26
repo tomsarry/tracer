@@ -87,3 +87,9 @@ Improving the flexibility of the camera.
 Adding mate and shiny iridescent materials.
 
 ![19_iridescent](./images/19_iridescent.jpg)
+
+---
+
+Adding defocus blur to camera.
+
+![20_defocus_blur](./images/20_defocus_blur.jpg)

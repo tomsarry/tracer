@@ -106,6 +106,15 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
 
 inline vec3 unit_vector(vec3 v) { return v / v.length(); }
 
+inline vec3 random_in_unit_disk() {
+	while (true) {
+		auto p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
+		bool is_on_unit_disk = p.length_squared() < 1;
+
+		if (is_on_unit_disk) return p;
+	}
+}
+
 inline vec3 random_in_unit_cube() { return vec3::random(-1, 1); }
 
 inline vec3 random_in_unit_sphere() {
@@ -113,9 +122,7 @@ inline vec3 random_in_unit_sphere() {
 		auto p = random_in_unit_cube();
 		bool is_in_unit_sphere = p.length_squared() < 1;
 
-		if (is_in_unit_sphere) {
-			return p;
-		}
+		if (is_in_unit_sphere) return p;
 	}
 }
 
