@@ -1,4 +1,5 @@
 set(SOURCES
+    dielectric.h
     lambertian.h
     material.h
     metal.h

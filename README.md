@@ -69,3 +69,8 @@ Adding new materials: lambertian and fuzzy metal.
 ![14_metal](./images/14_metal.jpg)
 ![15_fuzzy_metal](./images/15_fuzzy_metal.jpg)
 
+---
+
+Adding new materials: dialectrics.
+
+![16_dialectrics](./images/16_dialectrics.jpg)
