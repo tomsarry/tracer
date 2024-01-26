@@ -1,5 +1,5 @@
-#ifndef DIALETRIC_H
-#define DIALETRIC_H
+#ifndef DIELECTRIC_H
+#define DIELECTRIC_H
 
 #include "materials/material.h"
 #include "objects/hittable.h"
