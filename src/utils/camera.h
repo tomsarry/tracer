@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "materials/material.h"
 #include "objects/hittable.h"
 #include "utils/color.h"
 #include "utils/random.h"
@@ -86,8 +87,12 @@ class camera {
 
 		hit_record rec;
 		if (world.hit(r, interval(0.001, Constants::INF), rec)) {
-			vec3 direction = rec.normal + random_unit_vector();
-			return 0.5 * ray_color(ray(rec.p, direction), depth - 1, world);
+			ray scattered;
+			color attenuation;
+			if (rec.mat->scatter(r, rec, attenuation, scattered))
+				return attenuation * ray_color(scattered, depth - 1, world);
+
+			return color(0, 0, 0);
 		}
 
 		return background_color(r);

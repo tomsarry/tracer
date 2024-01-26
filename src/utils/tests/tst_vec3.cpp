@@ -121,3 +121,17 @@ TEST(vec3, shouldDoValidCrossProduct) {
 	EXPECT_EQ(result.y(), expected.y());
 	EXPECT_EQ(result.z(), expected.z());
 }
+
+TEST(vec3, shouldSeeNearZero) {
+	const auto small = 1e-9;
+
+	{
+		vec3 v{small, small, small};
+		EXPECT_TRUE(v.near_zero());
+	}
+
+	{
+		vec3 v{small, small, 1};
+		EXPECT_FALSE(v.near_zero());
+	}
+}

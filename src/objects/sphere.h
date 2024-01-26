@@ -1,16 +1,19 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include <memory>
+
 #include "hittable.h"
+#include "materials/material.h"
 #include "utils/interval.h"
 #include "utils/vec3.h"
 
 class sphere : public hittable {
    public:
-	sphere(point3 c, double r) : center(c), radius(r) {}
+	sphere(point3 _center, double _radius, std::shared_ptr<material> _material)
+		: center(_center), radius(_radius), mat(_material) {}
 
-	bool hit(const ray& r, interval ray_t, hit_record& rec)
-		const override {
+	bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
 		vec3 oc = r.origin() - center;
 		auto a = r.direction().length_squared();
 		auto half_b = dot(oc, r.direction());
@@ -32,6 +35,7 @@ class sphere : public hittable {
 		rec.p = r.at(rec.t);
 		vec3 outward_normal = (rec.p - center) / radius;
 		rec.set_normal_face(r, outward_normal);
+		rec.mat = mat;
 
 		return true;
 	}
@@ -39,6 +43,7 @@ class sphere : public hittable {
    private:
 	point3 center;
 	double radius;
+	std::shared_ptr<material> mat;
 };
 
 #endif
