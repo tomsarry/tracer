@@ -71,6 +71,7 @@ Adding new materials: lambertian and fuzzy metal.
 
 ---
 
-Adding new materials: dielectrics.
+Adding new materials: dielectrics and hollow glass sphere.
 
 ![16_dielectrics](./images/16_dielectrics.jpg)
+![17_hollow_glass](./images/17_hollow_glass.jpg)
