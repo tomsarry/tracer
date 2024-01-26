@@ -75,3 +75,9 @@ Adding new materials: dielectrics and hollow glass sphere.
 
 ![16_dielectrics](./images/16_dielectrics.jpg)
 ![17_hollow_glass](./images/17_hollow_glass.jpg)
+
+---
+
+Improving the flexibility of the camera.
+
+![18_improving_camera](./images/18_position.jpg)
