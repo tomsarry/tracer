@@ -63,8 +63,9 @@ Applying gamma correction.
 ![12_gamma_correction](./images/12_gamma_correction.jpg)
 ---
 
-Adding new materials: lambertian and metal.
+Adding new materials: lambertian and fuzzy metal.
 
 ![13_lambertian](./images/13_lambertian.jpg)
 ![14_metal](./images/14_metal.jpg)
+![15_fuzzy_metal](./images/15_fuzzy_metal.jpg)
 
