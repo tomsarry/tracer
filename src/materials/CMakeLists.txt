@@ -1,6 +1,7 @@
 set(SOURCES
     lambertian.h
     material.h
+    metal.h
 )
 
 add_library(tracer.materials ${SOURCES})
