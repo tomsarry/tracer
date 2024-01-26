@@ -6,6 +6,8 @@ set(SOURCES
     pixel_map.h
     random.h
     ray.h
+    scenes.cpp
+    scenes.h
     vec3.h
 )
 

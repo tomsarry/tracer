@@ -93,3 +93,9 @@ Adding mate and shiny iridescent materials.
 Adding defocus blur to camera.
 
 ![20_defocus_blur](./images/20_defocus_blur.jpg)
+
+---
+
+Final scene of book one (took 24 minutes to render on 8 cores 🤡).
+
+![21_final_scene](./images/21_final_scene_book1.jpg)
