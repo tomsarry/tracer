@@ -3,7 +3,6 @@
 
 #include "materials/material.h"
 #include "objects/hittable.h"
-#include "objects/hittable_list.h"
 #include "utils/color.h"
 #include "utils/constants.h"
 #include "utils/pixel_map.h"
@@ -29,6 +28,8 @@ class camera : public copyable<camera> {
 	std::shared_ptr<camera> deep_copy() const noexcept {
 		return std::make_shared<camera>(*this);
 	}
+
+	void zoom(double n) { vertical_fov -= n; }
 
 	void render(std::shared_ptr<hittable> world, pixel_map& pixels) {
 		initialize();

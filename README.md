@@ -2,6 +2,12 @@
 
 A simple raytracer, based on [Ray Trancing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
 
+## Requirements
+
+- `cmake`
+- `g++`
+- `libncurses5-dev`
+
 ## How to Use
 
 Either use the vscode tasks `cmake` and `build` or manually:
