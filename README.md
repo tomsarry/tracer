@@ -111,3 +111,10 @@ Final scene of book one (took 24 minutes to render on 8 cores 🤡).
 First pass at creating a real-time rendered.
 
 ![real_time_rendering](./demos/initial_real_time_renderer.gif)
+
+---
+
+Animated camera to make videos.
+
+![video](./demos/initial_rotating_camera.gif)
+

@@ -144,4 +144,30 @@ void simple_scene_rrt(
 	cam.vertical_up = vec3(0, 1, 0);
 }
 
+void video(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+	auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+	auto material_left = std::make_shared<iridescent>(true);
+
+	world.add(std::make_shared<sphere>(
+		point3(0.0, -100.5, -1.0), 100.0, material_ground));
+	world.add(
+		std::make_shared<sphere>(point3(0.0, 0.0, 0), 0.1, material_center));
+	world.add(
+		std::make_shared<sphere>(point3(-.2, 0.0, 0), 0.1, material_left));
+
+	cam.aspect_ratio = 1;
+	cam.image_width = 200;
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.image_height = (cam.image_height < 1) ? 1 : cam.image_height;
+
+	cam.vertical_fov = 45;
+	cam.look_from = point3(-2, 2, 1);
+	cam.look_at = point3(-0.1, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+}
+
 }  // namespace scenes::book_one

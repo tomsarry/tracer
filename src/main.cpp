@@ -3,6 +3,7 @@
 #include "objects/hittable_list.h"
 #include "utils/camera.h"
 #include "utils/concurrency.h"
+#include "utils/constants.h"
 #include "utils/io.h"
 #include "utils/pixel_map.h"
 #include "utils/scenes.h"
@@ -68,6 +69,12 @@ bool handle_user_input(camera& cam, char input) {
 	return true;
 }
 
+void rotate_camera(camera& cam, int degrees) {
+	auto radians = Constants::degress_to_radians(degrees);
+	auto new_position = point3(cos(radians), 0.5, sin(radians));
+	cam.look_from = new_position;
+}
+
 void real_time_render(camera& cam, hittable_list& world) {
 	bool should_continue = true;
 	initscr();
@@ -87,12 +94,27 @@ void real_time_render(camera& cam, hittable_list& world) {
 	endwin();
 }
 
+void video_render(camera& cam, hittable_list& world) {
+	int degrees = 0;
+
+	while (degrees <= 360) {
+		rotate_camera(cam, degrees);
+		pixel_map frame = multi_thread_render(N_THREADS, cam, world);
+
+		io::write_to_file(
+			"video.ppm", frame, cam.image_height, cam.image_width,
+			cam.samples_per_pixel * N_THREADS);
+
+		degrees += 5;
+	}
+}
+
 int main() {
 	hittable_list world;
 	camera cam;
 
-	scenes::book_one::simple_scene_rrt(world, cam, 2, 10);
+	scenes::book_one::video(world, cam, 4, 4);
 
-	real_time_render(cam, world);
+	video_render(cam, world);
 	return 0;
 }
