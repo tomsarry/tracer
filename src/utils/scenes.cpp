@@ -118,6 +118,7 @@ void simple_scene_rrt(
 	auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
 	auto material_left = std::make_shared<iridescent>(true);
 	auto material_right = std::make_shared<iridescent>(false);
+	auto material_metal = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.8);
 
 	world.add(std::make_shared<sphere>(
 		point3(0.0, -100.5, -1.0), 100.0, material_ground));
@@ -126,9 +127,9 @@ void simple_scene_rrt(
 	world.add(
 		std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
 	world.add(
-		std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
-	world.add(
 		std::make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+	world.add(
+		std::make_shared<sphere>(point3(2.0, 0.0, -1.0), 0.5, material_metal));
 
 	cam.aspect_ratio = 1;
 	cam.image_width = 200;
@@ -138,7 +139,7 @@ void simple_scene_rrt(
 	cam.image_height = (cam.image_height < 1) ? 1 : cam.image_height;
 
 	cam.vertical_fov = 30;
-	cam.look_from = point3(-2, 0, 1);
+	cam.look_from = point3(-2, 2, 1);
 	cam.look_at = point3(0, 0, -1);
 	cam.vertical_up = vec3(0, 1, 0);
 }

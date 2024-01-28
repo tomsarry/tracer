@@ -105,3 +105,9 @@ Adding defocus blur to camera.
 Final scene of book one (took 24 minutes to render on 8 cores 🤡).
 
 ![21_final_scene](./images/21_final_scene_book1.jpg)
+
+---
+
+First pass at creating a real-time rendered.
+
+![real_time_rendering](./demos/initial_real_time_renderer.gif)
