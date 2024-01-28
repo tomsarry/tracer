@@ -1,6 +1,8 @@
 set(SOURCES
     camera.h
     color.h
+    concurrency.cpp
+    concurrency.h
     constants.h
     interval.h
     pixel_map.h

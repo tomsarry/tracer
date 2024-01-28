@@ -13,6 +13,13 @@ class sphere : public hittable {
 	sphere(point3 _center, double _radius, std::shared_ptr<material> _material)
 		: center(_center), radius(_radius), mat(_material) {}
 
+	std::shared_ptr<hittable> deep_copy() const noexcept override {
+		auto new_sphere = std::make_shared<sphere>(*this);
+		new_sphere->mat = mat->deep_copy();
+
+		return new_sphere;
+	}
+
 	bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
 		vec3 oc = r.origin() - center;
 		auto a = r.direction().length_squared();

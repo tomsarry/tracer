@@ -9,6 +9,10 @@ class iridescent : public material {
    public:
 	iridescent(bool _mate = false) : mate(_mate) {}
 
+	std::shared_ptr<material> deep_copy() const noexcept override {
+		return std::make_shared<iridescent>(*this);
+	}
+
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
 		ray& scattered) const override {

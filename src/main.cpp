@@ -5,13 +5,13 @@
 #include "utils/pixel_map.h"
 #include "utils/scenes.h"
 
-const auto N_THREADS = 4;
+const ThreadNumber N_THREADS = ThreadNumber::FOUR;
 
 int main() {
 	hittable_list world;
 	camera cam;
 
-	scenes::book_one::end(world, cam);
+	scenes::book_one::end(world, cam, 32, 10);
 
 	pixel_map final_image = multi_thread_render(N_THREADS, cam, world);
 

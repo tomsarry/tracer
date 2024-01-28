@@ -10,6 +10,10 @@ class lambertian : public material {
    public:
 	lambertian(const color& a) : albedo(a) {}
 
+	std::shared_ptr<material> deep_copy() const noexcept override {
+		return std::make_shared<lambertian>(*this);
+	}
+
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
 		ray& scattered) const override {

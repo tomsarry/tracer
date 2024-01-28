@@ -11,8 +11,21 @@ class hittable_list : public hittable {
    public:
 	std::vector<std::shared_ptr<hittable>> objects;
 
-	hittable_list() {}
-	hittable_list(std::shared_ptr<hittable> object) { add(object); }
+	explicit hittable_list() noexcept = default;
+	explicit hittable_list(const std::shared_ptr<hittable>& object) noexcept {
+		add(object);
+	}
+
+	std::shared_ptr<hittable> deep_copy() const noexcept override {
+		auto new_hittable_list = std::make_shared<hittable_list>(*this);
+		new_hittable_list->clear();
+
+		for (const auto& obj : objects) {
+			new_hittable_list->add(obj->deep_copy());
+		}
+
+		return new_hittable_list;
+	}
 
 	void clear() { objects.clear(); }
 

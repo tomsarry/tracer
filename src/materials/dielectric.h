@@ -8,6 +8,10 @@ class dielectric : public material {
    public:
 	dielectric(double refraction_idx) : refraction_index(refraction_idx) {}
 
+	std::shared_ptr<material> deep_copy() const noexcept override {
+		return std::make_shared<dielectric>(*this);
+	}
+
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
 		ray& scattered) const override {

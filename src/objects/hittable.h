@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "utils/copyable.h"
 #include "utils/interval.h"
 #include "utils/ray.h"
 
@@ -22,10 +23,11 @@ class hit_record {
 	}
 };
 
-class hittable {
+class hittable : public copyable<hittable> {
    public:
 	virtual ~hittable() = default;
 
+	virtual std::shared_ptr<hittable> deep_copy() const noexcept = 0;
 	virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const = 0;
 };
 

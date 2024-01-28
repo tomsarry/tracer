@@ -1,6 +1,7 @@
 #include "scenes.h"
 
 #include "materials/dielectric.h"
+#include "materials/iridescent.h"
 #include "materials/lambertian.h"
 #include "materials/metal.h"
 #include "objects/hittable_list.h"
@@ -56,14 +57,14 @@ void construct_world(hittable_list &world) {
 	world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 }
 
-void construct_camera(camera &cam) {
+void construct_camera(camera &cam, int samples_per_pixel, int max_depth) {
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 200;
 	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
 	cam.image_height = (cam.image_height < 1) ? 1 : cam.image_height;
 
-	cam.samples_per_pixel = 2;
-	cam.max_depth = 10;
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
 
 	cam.vertical_fov = 20;
 	cam.look_from = point3(13, 2, 3);
@@ -74,9 +75,41 @@ void construct_camera(camera &cam) {
 	cam.focus_dist = 10.0;
 }
 
-void end(hittable_list &world, camera &cam) {
+void end(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	construct_world(world);
-	construct_camera(cam);
+	construct_camera(cam, samples_per_pixel, max_depth);
+}
+
+void performance_analysis(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+	auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+	auto material_left = std::make_shared<dielectric>(1.5);
+	auto material_right = std::make_shared<iridescent>(false);
+
+	world.add(std::make_shared<sphere>(
+		point3(0.0, -100.5, -1.0), 100.0, material_ground));
+	world.add(
+		std::make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
+	world.add(
+		std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
+	world.add(
+		std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
+	world.add(
+		std::make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 1000;
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.image_height = (cam.image_height < 1) ? 1 : cam.image_height;
+
+	cam.vertical_fov = 30;
+	cam.look_from = point3(-2, 2, 1);
+	cam.look_at = point3(0, 0, -1);
+	cam.vertical_up = vec3(0, 1, 0);
 }
 
 }  // namespace scenes::book_one

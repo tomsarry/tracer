@@ -3,13 +3,14 @@
 
 #include "materials/material.h"
 #include "objects/hittable.h"
+#include "objects/hittable_list.h"
 #include "utils/color.h"
 #include "utils/constants.h"
 #include "utils/pixel_map.h"
 #include "utils/random.h"
 #include "utils/vec3.h"
 
-class camera {
+class camera : public copyable<camera> {
    public:
 	double aspect_ratio = 1.0;	// Ratio of image width over height
 	int image_width = 100;		// Rendered image width in pixel count
@@ -25,12 +26,19 @@ class camera {
 	double defocus_angle = 0;
 	double focus_dist = 10;
 
-	void render(const hittable& world, pixel_map& pixels) {
+	std::shared_ptr<camera> deep_copy() const noexcept {
+		return std::make_shared<camera>(*this);
+	}
+
+	void render(std::shared_ptr<hittable> world, pixel_map& pixels) {
 		initialize();
 
 		for (int j = 0; j < image_height; ++j) {
-			std::clog << "\rScanlines remanaining: " << (image_height - j)
-					  << ' ' << std::flush;
+			auto remaining = image_height - j;
+			if (remaining % 10 == 0)
+				std::clog << "\rScanlines remaining: " << (image_height - j)
+						  << ' ' << std::flush;
+
 			for (int i = 0; i < image_width; ++i) {
 				color pixel_color(0, 0, 0);
 				for (int sample = 0; sample < samples_per_pixel; ++sample) {
@@ -38,12 +46,11 @@ class camera {
 					pixel_color += ray_color(r, max_depth, world);
 				}
 
-				// write_color(std::cout, pixel_color, samples_per_pixel);
 				pixels[j][i] += pixel_color;
 			}
 		}
 
-		std::clog << "\rDone.                   " << std::endl;
+		std::clog << "\rDone.                         " << std::endl;
 	}
 
    private:
@@ -56,9 +63,6 @@ class camera {
 	vec3 defocus_disk_v;
 
 	void initialize() {
-		// image_height = static_cast<int>(image_width / aspect_ratio);
-		// image_height = (image_height < 1) ? 1 : image_height;
-
 		center = look_from;
 
 		const auto theta = Constants::degress_to_radians(vertical_fov);
@@ -110,11 +114,12 @@ class camera {
 		return (px * pixel_delta_u) + (py * pixel_delta_v);
 	}
 
-	color ray_color(const ray& r, int depth, const hittable& world) {
+	color ray_color(
+		const ray& r, int depth, const std::shared_ptr<hittable>& world) {
 		if (depth <= 0) return color(0, 0, 0);
 
 		hit_record rec;
-		if (world.hit(r, interval(0.001, Constants::INF), rec)) {
+		if (world->hit(r, interval(0.001, Constants::INF), rec)) {
 			ray scattered;
 			color attenuation;
 			if (rec.mat->scatter(r, rec, attenuation, scattered))
