@@ -26,12 +26,34 @@ bool handle_user_input(camera& cam, char input) {
 		case 'q':  // quit
 			return false;
 		case 'a':
-			cam.look_from += vec3(-0.5, 0, 0);
-			cam.look_at += vec3(-0.5, 0, 0);
+			cam.move_left();
 			return true;
 		case 'd':
-			cam.look_from += vec3(0.5, 0, 0);
-			cam.look_at += vec3(0.5, 0, 0);
+			cam.move_right();
+			return true;
+		case 'w':
+			cam.move_front();
+			return true;
+		case 's':
+			cam.move_back();
+			return true;
+		case 'u':
+			cam.move_up();
+			return true;
+		case 'i':
+			cam.move_down();
+			return true;
+		case 'k':
+			cam.look_up();
+			return true;
+		case 'l':
+			cam.look_down();
+			return true;
+		case 'n':
+			cam.look_left();
+			return true;
+		case 'm':
+			cam.look_right();
 			return true;
 		case '+':
 			cam.zoom(5.0);

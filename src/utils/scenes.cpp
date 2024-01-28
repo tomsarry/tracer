@@ -138,7 +138,7 @@ void simple_scene_rrt(
 	cam.image_height = (cam.image_height < 1) ? 1 : cam.image_height;
 
 	cam.vertical_fov = 30;
-	cam.look_from = point3(-2, 2, 1);
+	cam.look_from = point3(-2, 0, 1);
 	cam.look_at = point3(0, 0, -1);
 	cam.vertical_up = vec3(0, 1, 0);
 }

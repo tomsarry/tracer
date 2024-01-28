@@ -31,6 +31,41 @@ class camera : public copyable<camera> {
 
 	void zoom(double n) { vertical_fov -= n; }
 
+	void move_left() {
+		look_from += vec3(-0.5, 0, 0);
+		look_at += vec3(-0.5, 0, 0);
+	}
+
+	void move_right() {
+		look_from += vec3(0.5, 0, 0);
+		look_at += vec3(0.5, 0, 0);
+	}
+
+	void move_front() {
+		look_from += vec3(0, 0, -0.5);
+		look_at += vec3(0, 0, -0.5);
+	}
+	void move_back() {
+		look_from += vec3(0, 0, 0.5);
+		look_at += vec3(0, 0, 0.5);
+	}
+
+	void move_up() {
+		look_from += vec3(0, 0.5, 0);
+		look_at += vec3(0, 0.5, 0);
+	}
+
+	void move_down() {
+		look_from += vec3(0, -0.5, 0);
+		look_at += vec3(0, -0.5, 0);
+	}
+
+	void look_up() { look_at += vec3(0, 0.5, 0); }
+	void look_down() { look_at += vec3(0, -0.5, 0); }
+
+	void look_left() { look_at += vec3(-0.5, 0, 0); }
+	void look_right() { look_at += vec3(0.5, 0, 0); }
+
 	void render(std::shared_ptr<hittable> world, pixel_map& pixels) {
 		initialize();
 
