@@ -1,5 +1,7 @@
 #include <curses.h>
 
+#include <string>
+
 #include "objects/hittable_list.h"
 #include "utils/camera.h"
 #include "utils/concurrency.h"
@@ -101,6 +103,9 @@ void video_render(camera& cam, hittable_list& world) {
 		rotate_camera(cam, degrees);
 		pixel_map frame = multi_thread_render(N_THREADS, cam, world);
 
+		const std::string file_name =
+			"../tmp/frame_" + std::to_string(degrees) + ".ppm";
+
 		io::write_to_file(
 			"video.ppm", frame, cam.image_height, cam.image_width,
 			cam.samples_per_pixel * N_THREADS);
@@ -113,7 +118,7 @@ int main() {
 	hittable_list world;
 	camera cam;
 
-	scenes::book_one::video(world, cam, 4, 4);
+	scenes::book_one::video(world, cam, 4, 10);
 
 	video_render(cam, world);
 	return 0;

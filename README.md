@@ -114,7 +114,15 @@ First pass at creating a real-time rendered.
 
 ---
 
-Animated camera to make videos.
+Animated camera to make real-time animations.
 
 ![video](./demos/initial_rotating_camera.gif)
+
+---
+
+Precomputed frames assembled afterwards, with variying anti-aliasing.
+
+![video_dual](./demos/video_dual.gif)
+![video_dual2](./demos/video_dual2.gif)
+![video_dual3](./demos/video_dual3.gif)
 
