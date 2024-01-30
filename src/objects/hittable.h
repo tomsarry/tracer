@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "objects/aabb.h"
 #include "utils/copyable.h"
 #include "utils/interval.h"
 #include "utils/ray.h"
@@ -29,6 +30,7 @@ class hittable : public copyable<hittable> {
 
 	virtual std::shared_ptr<hittable> deep_copy() const noexcept = 0;
 	virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const = 0;
+	virtual aabb bounding_box() const = 0;
 };
 
 #endif

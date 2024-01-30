@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "hittable.h"
+#include "objects/aabb.h"
 #include "utils/interval.h"
 
 class hittable_list : public hittable {
@@ -29,7 +30,10 @@ class hittable_list : public hittable {
 
 	void clear() { objects.clear(); }
 
-	void add(std::shared_ptr<hittable> object) { objects.emplace_back(object); }
+	void add(std::shared_ptr<hittable> object) {
+		objects.emplace_back(object);
+		bbox = aabb(bbox, object->bounding_box());
+	}
 
 	bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
 		hit_record temp_rec;
@@ -46,6 +50,11 @@ class hittable_list : public hittable {
 
 		return has_hit;
 	}
+
+	aabb bounding_box() const override { return bbox; }
+
+   private:
+	aabb bbox;
 };
 
 #endif

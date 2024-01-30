@@ -1,7 +1,9 @@
 #include <curses.h>
 
+#include <memory>
 #include <string>
 
+#include "objects/bvh.h"
 #include "objects/hittable_list.h"
 #include "utils/camera.h"
 #include "utils/concurrency.h"
@@ -117,8 +119,11 @@ void video_render(camera& cam, hittable_list& world) {
 int main() {
 	hittable_list world;
 	camera cam;
+	const auto BVH = false;
 
 	scenes::book_two::bouncing_spheres(world, cam, 100, 50);
+
+	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 
 	one_shot_render(cam, world);
 
