@@ -134,5 +134,12 @@ Bouncing spheres.
 
 ![bouncing_spheres](./images/22_bouncing_spheres.jpg)
 
+---
+
+BVH
+
+For performance analysis, see [perf](./perf/README.md#bounding-volume-hierarchy).
+
+
 
 
