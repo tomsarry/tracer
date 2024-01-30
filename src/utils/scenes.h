@@ -17,4 +17,10 @@ void video(
 
 }  // namespace scenes::book_one
 
+namespace scenes::book_two {
+void bouncing_spheres(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+
+}
+
 #endif

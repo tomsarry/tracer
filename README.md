@@ -25,6 +25,8 @@ $ mogrify -format jpg *.ppm # optional
 
 ## Updates
 
+### Book One
+
 A single object in the scene.
 
 ![01_sphere](./images/01_sphere.jpg)
@@ -125,4 +127,12 @@ Precomputed frames assembled afterwards, with variying anti-aliasing.
 ![video_dual](./demos/video_dual.gif)
 ![video_dual2](./demos/video_dual2.gif)
 ![video_dual3](./demos/video_dual3.gif)
+
+### Book Two
+
+Bouncing spheres.
+
+![bouncing_spheres](./images/22_bouncing_spheres.jpg)
+
+
 

@@ -10,7 +10,7 @@
 #include "utils/pixel_map.h"
 #include "utils/scenes.h"
 
-const ThreadNumber N_THREADS = ThreadNumber::ONE;
+const ThreadNumber N_THREADS = ThreadNumber::FOUR;
 const bool REAL_TIME = true;
 
 void one_shot_render(camera& cam, hittable_list& world) {
@@ -118,8 +118,9 @@ int main() {
 	hittable_list world;
 	camera cam;
 
-	scenes::book_one::video(world, cam, 4, 10);
+	scenes::book_two::bouncing_spheres(world, cam, 100, 50);
 
-	video_render(cam, world);
+	one_shot_render(cam, world);
+
 	return 0;
 }

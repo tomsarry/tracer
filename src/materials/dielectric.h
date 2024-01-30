@@ -35,7 +35,7 @@ class dielectric : public material {
 			direction = refract(unit_direction, rec.normal, refraction_ratio);
 		}
 
-		scattered = ray(rec.p, refracted);
+		scattered = ray(rec.p, refracted, r_in.time());
 		return true;
 	}
 
