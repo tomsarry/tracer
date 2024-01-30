@@ -8,6 +8,7 @@
 enum ThreadNumber {
 	ONE = 1,
 	FOUR = 4,
+	SIX = 6,
 	EIGHT = 8,
 };
 

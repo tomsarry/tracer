@@ -12,8 +12,7 @@
 #include "utils/pixel_map.h"
 #include "utils/scenes.h"
 
-const ThreadNumber N_THREADS = ThreadNumber::FOUR;
-const bool REAL_TIME = true;
+const ThreadNumber N_THREADS = ThreadNumber::EIGHT;
 
 void one_shot_render(camera& cam, hittable_list& world) {
 	pixel_map final_image = multi_thread_render(N_THREADS, cam, world);
@@ -119,7 +118,7 @@ void video_render(camera& cam, hittable_list& world) {
 int main() {
 	hittable_list world;
 	camera cam;
-	const auto BVH = false;
+	const auto BVH = true;
 
 	scenes::book_two::bouncing_spheres(world, cam, 100, 50);
 
