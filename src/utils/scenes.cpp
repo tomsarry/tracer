@@ -6,6 +6,7 @@
 #include "materials/metal.h"
 #include "objects/hittable_list.h"
 #include "objects/sphere.h"
+#include "textures/checker_texture.h"
 
 namespace scenes::book_one {
 
@@ -237,5 +238,29 @@ void bouncing_spheres(
 
 	cam.defocus_angle = 0.02;
 	cam.focus_dist = 10.0;
+}
+
+void two_spheres(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	auto checker = std::make_shared<checker_texture>(
+		0.8, color(.2, .3, .1), color(.9, .9, .9));
+
+	world.add(std::make_shared<sphere>(
+		point3(0, -10, 0), 10, std::make_shared<lambertian>(checker)));
+	world.add(std::make_shared<sphere>(
+		point3(0, 10, 0), 10, std::make_shared<lambertian>(checker)));
+
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = 100;
+	cam.max_depth = 50;
+
+	cam.vertical_fov = 20;
+	cam.look_from = point3(13, 2, 3);
+	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
 }
 }  // namespace scenes::book_two
