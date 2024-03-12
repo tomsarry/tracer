@@ -5,6 +5,7 @@
 #include "materials/lambertian.h"
 #include "materials/metal.h"
 #include "objects/hittable_list.h"
+#include "objects/quad.h"
 #include "objects/sphere.h"
 #include "textures/checker_texture.h"
 #include "textures/image_texture.h"
@@ -280,6 +281,41 @@ void earth(
 
 	cam.vertical_fov = 20;
 	cam.look_from = point3(0, 0, 12);
+	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
+void quads(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	// Materials
+	auto left_red = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
+	auto back_green = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
+	auto right_blue = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
+	auto upper_orange = std::make_shared<lambertian>(color(1.0, 0.5, 0.0));
+	auto lower_teal = std::make_shared<lambertian>(color(0.2, 0.8, 0.8));
+
+	// Quads
+	world.add(std::make_shared<quad>(
+		point3(-3, -2, 5), vec3(0, 0, -4), vec3(0, 4, 0), left_red));
+	world.add(std::make_shared<quad>(
+		point3(-2, -2, 0), vec3(4, 0, 0), vec3(0, 4, 0), back_green));
+	world.add(std::make_shared<quad>(
+		point3(3, -2, 1), vec3(0, 0, 4), vec3(0, 4, 0), right_blue));
+	world.add(std::make_shared<quad>(
+		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
+	world.add(std::make_shared<quad>(
+		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), lower_teal));
+
+	cam.aspect_ratio = 1.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = 100;
+	cam.max_depth = 50;
+
+	cam.vertical_fov = 80;
+	cam.look_from = point3(0, 0, 9);
 	cam.look_at = point3(0, 0, 0);
 	cam.vertical_up = vec3(0, 1, 0);
 
