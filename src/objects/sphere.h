@@ -1,11 +1,13 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include <cmath>
 #include <memory>
 
 #include "hittable.h"
 #include "materials/material.h"
 #include "objects/aabb.h"
+#include "utils/constants.h"
 #include "utils/interval.h"
 #include "utils/vec3.h"
 
@@ -60,6 +62,7 @@ class sphere : public hittable {
 		rec.p = r.at(rec.t);
 		vec3 outward_normal = (rec.p - center) / radius;
 		rec.set_normal_face(r, outward_normal);
+		get_sphere_uv(outward_normal, rec.u, rec.v);
 		rec.mat = mat;
 
 		return true;
@@ -77,6 +80,14 @@ class sphere : public hittable {
 
 	point3 sphere_center(double time) const {
 		return center1 + time * center_vec;
+	}
+
+	static void get_sphere_uv(const point3& p, double& u, double& v) {
+		auto theta = acos(-p.y());
+		auto phi = atan2(-p.z(), p.x()) + Constants::PI;
+
+		u = phi / (2 * Constants::PI);
+		v = theta / Constants::PI;
 	}
 };
 

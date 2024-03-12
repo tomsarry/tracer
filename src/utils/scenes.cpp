@@ -7,6 +7,7 @@
 #include "objects/hittable_list.h"
 #include "objects/sphere.h"
 #include "textures/checker_texture.h"
+#include "textures/image_texture.h"
 
 namespace scenes::book_one {
 
@@ -258,6 +259,27 @@ void two_spheres(
 
 	cam.vertical_fov = 20;
 	cam.look_from = point3(13, 2, 3);
+	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
+void earth(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	auto earth_texture = std::make_shared<image_texture>("earthmap.jpg");
+	auto earth_surface = std::make_shared<lambertian>(earth_texture);
+	auto globe = std::make_shared<sphere>(point3(0, 0, 0), 2, earth_surface);
+	world.add(globe);
+
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = 100;
+	cam.max_depth = 50;
+
+	cam.vertical_fov = 20;
+	cam.look_from = point3(0, 0, 12);
 	cam.look_at = point3(0, 0, 0);
 	cam.vertical_up = vec3(0, 1, 0);
 

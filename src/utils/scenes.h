@@ -22,6 +22,8 @@ void bouncing_spheres(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void two_spheres(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+void earth(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 
 }  // namespace scenes::book_two
 

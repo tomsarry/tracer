@@ -18,7 +18,7 @@ void one_shot_render(camera& cam, hittable_list& world) {
 	pixel_map final_image = multi_thread_render(N_THREADS, cam, world);
 
 	io::write_to_file(
-		"checkers.ppm", final_image, cam.image_height, cam.image_width,
+		"image.ppm", final_image, cam.image_height, cam.image_width,
 		cam.samples_per_pixel * N_THREADS);
 }
 
@@ -120,7 +120,7 @@ int main() {
 	camera cam;
 	const auto BVH = true;
 
-	scenes::book_two::two_spheres(world, cam, 100, 50);
+	scenes::book_two::earth(world, cam, 100, 50);
 
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 

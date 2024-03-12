@@ -1,4 +1,5 @@
 set(SOURCES
+    image_asset.h
     texture.h
 )
 
