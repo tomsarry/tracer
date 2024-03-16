@@ -120,7 +120,7 @@ int main() {
 	camera cam;
 	const auto BVH = true;
 
-	scenes::book_two::quads(world, cam, 100, 50);
+	scenes::book_two::monkey(world, cam, 32, 25);
 
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 
