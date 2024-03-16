@@ -9,6 +9,7 @@
 #include "objects/sphere.h"
 #include "textures/checker_texture.h"
 #include "textures/image_texture.h"
+#include "textures/scratch_texture.h"
 
 namespace scenes::book_one {
 
@@ -321,8 +322,8 @@ void quads(
 void monkey(
 	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	// Materials
-	auto bricks_texture = std::make_shared<image_texture>("monkey.png");
-	auto bricks_surface = std::make_shared<lambertian>(bricks_texture);
+	auto monkey_texture = std::make_shared<image_texture>("monkey.png");
+	auto monkey_surface = std::make_shared<lambertian>(monkey_texture);
 	auto left_red = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
 	auto back_green = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
 	auto right_blue = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
@@ -338,7 +339,7 @@ void monkey(
 	world.add(std::make_shared<quad>(
 		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
 	world.add(std::make_shared<quad>(
-		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), bricks_surface));
+		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), monkey_surface));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;
@@ -349,6 +350,43 @@ void monkey(
 	cam.vertical_fov = 80;
 	cam.look_from = point3(0, 0, 9);
 	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
+void single_scratch(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	// Materials
+	auto left_red = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
+	auto back_green = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
+	auto right_blue = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
+	auto upper_orange = std::make_shared<lambertian>(color(1.0, 0.5, 0.0));
+	auto single_scratch =
+		std::make_shared<scratch_texture>(0.1, 0.1, 0.5, 0.2, 0.001);
+	auto scratch_texture = std::make_shared<lambertian>(single_scratch);
+
+	// Quads
+	world.add(std::make_shared<quad>(
+		point3(-3, -2, 5), vec3(0, 0, -4), vec3(0, 4, 0), left_red));
+	world.add(std::make_shared<quad>(
+		point3(-2, -2, 0), vec3(4, 0, 0), vec3(0, 4, 0), back_green));
+	world.add(std::make_shared<quad>(
+		point3(3, -2, 1), vec3(0, 0, 4), vec3(0, 4, 0), right_blue));
+	world.add(std::make_shared<quad>(
+		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
+	world.add(std::make_shared<quad>(
+		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), scratch_texture));
+
+	cam.aspect_ratio = 1.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+
+	cam.vertical_fov = 60;
+	cam.look_from = point3(0, 0, 7);
+	cam.look_at = point3(0, -3, 3);
 	cam.vertical_up = vec3(0, 1, 0);
 
 	cam.defocus_angle = 0;

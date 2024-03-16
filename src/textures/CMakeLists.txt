@@ -1,5 +1,7 @@
 set(SOURCES
     image_asset.h
+    image_texture.h
+    scratch_texture.h
     texture.h
 )
 
