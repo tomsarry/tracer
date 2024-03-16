@@ -6,6 +6,7 @@ set(SOURCES
     constants.h
     interval.h
     pixel_map.h
+    point2.h
     random.h
     ray.h
     scenes.cpp

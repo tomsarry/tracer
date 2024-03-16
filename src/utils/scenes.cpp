@@ -10,6 +10,7 @@
 #include "textures/checker_texture.h"
 #include "textures/image_texture.h"
 #include "textures/scratch_texture.h"
+#include "utils/point2.h"
 
 namespace scenes::book_one {
 
@@ -362,8 +363,8 @@ void single_scratch(
 	auto back_green = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
 	auto right_blue = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
 	auto upper_orange = std::make_shared<lambertian>(color(1.0, 0.5, 0.0));
-	auto single_scratch =
-		std::make_shared<scratch_texture>(0.1, 0.1, 0.5, 0.2, 0.001);
+	auto single_scratch = std::make_shared<scratch_texture>(
+		point2(0.1, 0.1), point2(0.5, 0.2), 0.0001);
 	auto scratch_texture = std::make_shared<lambertian>(single_scratch);
 
 	// Quads
@@ -384,9 +385,9 @@ void single_scratch(
 	cam.samples_per_pixel = samples_per_pixel;
 	cam.max_depth = max_depth;
 
-	cam.vertical_fov = 60;
-	cam.look_from = point3(0, 0, 7);
-	cam.look_at = point3(0, -3, 3);
+	cam.vertical_fov = 40;
+	cam.look_from = point3(0, -1.5, 6);
+	cam.look_at = point3(-1.5, -3, 4);
 	cam.vertical_up = vec3(0, 1, 0);
 
 	cam.defocus_angle = 0;
