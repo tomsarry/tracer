@@ -120,7 +120,7 @@ int main() {
 	camera cam;
 	const auto BVH = true;
 
-	scenes::book_two::single_scratch(world, cam, 128, 25);
+	scenes::book_two::single_scratch(world, cam, 256, 25);
 
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 
