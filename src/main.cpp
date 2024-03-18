@@ -120,7 +120,7 @@ int main() {
 	camera cam;
 	const auto BVH = true;
 
-	scenes::scratches::close(world, cam, 32, 25);
+	scenes::scratches::far(world, cam, 256, 25);
 
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 

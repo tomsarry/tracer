@@ -12,6 +12,12 @@
 #include "textures/scratch_texture.h"
 #include "utils/point2.h"
 
+namespace {
+color magenta{1, 0, 1};
+color white{1, 1, 1};
+color orange{1, 0.64, 0};
+}  // namespace
+
 namespace scenes::book_one {
 
 void construct_world(hittable_list &world) {
@@ -369,8 +375,9 @@ void close(
 	scratch s1{point2(0.1, 0.1), point2(0.5, 0.2), 0.001};
 	scratch s2{point2(0.1, 0.2), point2(0.5, 0.3), 0.001};
 	std::vector scratches{s1, s2};
-	auto single_scratch = std::make_shared<scratch_texture>(scratches);
-	auto scratch_texture = std::make_shared<lambertian>(single_scratch);
+	auto scratch_tex =
+		std::make_shared<scratch_texture>(scratches, white, magenta);
+	auto scratch_texture = std::make_shared<lambertian>(scratch_tex);
 
 	// Quads
 	world.add(std::make_shared<quad>(
@@ -409,8 +416,16 @@ void far(
 	scratch s1{point2(0.1, 0.1), point2(0.5, 0.2), 0.001};
 	scratch s2{point2(0.1, 0.2), point2(0.5, 0.3), 0.001};
 	std::vector scratches{s1, s2};
-	auto single_scratch = std::make_shared<scratch_texture>(scratches);
-	auto scratch_texture = std::make_shared<lambertian>(single_scratch);
+
+	auto scratch_tex_white =
+		std::make_shared<scratch_texture>(scratches, white, magenta);
+	auto scratch_texture_white =
+		std::make_shared<lambertian>(scratch_tex_white);
+
+	auto scratch_tex_orange =
+		std::make_shared<scratch_texture>(scratches, orange, magenta);
+	auto scratch_texture_orange =
+		std::make_shared<lambertian>(scratch_tex_orange);
 
 	// Quads
 	world.add(std::make_shared<quad>(
@@ -420,9 +435,11 @@ void far(
 	world.add(std::make_shared<quad>(
 		point3(3, -2, 1), vec3(0, 0, 4), vec3(0, 4, 0), right_blue));
 	world.add(std::make_shared<quad>(
-		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
+		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4),
+		scratch_texture_orange));
 	world.add(std::make_shared<quad>(
-		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), scratch_texture));
+		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4),
+		scratch_texture_white));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;

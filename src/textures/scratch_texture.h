@@ -12,15 +12,18 @@ class scratch_texture : public texture {
 	// todo: efficient structure for intersection
 	// todo: enable control points for curvature
 	// todo: add color scratch and background
-	scratch_texture(std::vector<scratch>& _scratches) : scratches(_scratches) {}
+	scratch_texture(std::vector<scratch>& _scratches, color bg, color scratch)
+		: scratches(_scratches), background_color(bg), scratch_color(scratch) {}
 
 	color value(double u, double v, const point3& p) const override {
-		if (is_scratch(u, v)) return {1, 0, 1};
-		return {1, 1, 1};
+		if (is_scratch(u, v)) return scratch_color;
+		return background_color;
 	}
 
    private:
 	std::vector<scratch> scratches;
+	color background_color;
+	color scratch_color;
 
 	bool is_outside(
 		double v, double u, double x0, double y0, double x1, double y1,
