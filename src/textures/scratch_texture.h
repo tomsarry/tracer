@@ -1,15 +1,18 @@
 #ifndef SCRATCH_TEXTURE_H
 #define SCRATCH_TEXTURE_H
 
+#include <vector>
+
+#include "textures/scratch.h"
 #include "textures/texture.h"
 #include "utils/point2.h"
 
 class scratch_texture : public texture {
    public:
-	// todo: enable list of scratch coordinates
+	// todo: efficient structure for intersection
 	// todo: enable control points for curvature
-	scratch_texture(point2 _p0, point2 _p1, double _epsilon)
-		: p0(_p0), p1(_p1), epsilon(_epsilon) {}
+	// todo: add color scratch and background
+	scratch_texture(std::vector<scratch>& _scratches) : scratches(_scratches) {}
 
 	color value(double u, double v, const point3& p) const override {
 		if (is_scratch(u, v)) return {1, 0, 1};
@@ -17,12 +20,11 @@ class scratch_texture : public texture {
 	}
 
    private:
-	point2 p0;
-	point2 p1;
-	double epsilon;
+	std::vector<scratch> scratches;
 
 	bool is_outside(
-		double v, double u, double x0, double y0, double x1, double y1) const {
+		double v, double u, double x0, double y0, double x1, double y1,
+		const scratch& s) const {
 		const auto max_x = fmax(x0, x1);
 		const auto max_y = fmax(y0, y1);
 		const auto min_x = fmin(x0, x1);
@@ -32,18 +34,20 @@ class scratch_texture : public texture {
 	}
 
 	bool is_scratch(double u, double v) const {
-		const auto x0 = p0.x;
-		const auto y0 = p0.y;
-		const auto x1 = p1.x;
-		const auto y1 = p1.y;
+		for (const auto& s : scratches) {
+			const auto x0 = s.start.x;
+			const auto y0 = s.start.y;
+			const auto x1 = s.end.x;
+			const auto y1 = s.end.y;
 
-		const auto slope = (y1 - y0) / (x1 - x0);
-		const auto intercept = y0 - slope * x0;
+			const auto slope = (y1 - y0) / (x1 - x0);
+			const auto intercept = y0 - slope * x0;
 
-		if (is_outside(v, u, x0, y0, x1, y1)) return false;
+			if (is_outside(v, u, x0, y0, x1, y1, s)) continue;
 
-		// is (x,y) on the line?
-		if (fabs(slope * u + intercept - v) < epsilon) return true;
+			// is (x,y) on the line?
+			if (fabs(slope * u + intercept - v) < s.epsilon) return true;
+		}
 		return false;
 	}
 };

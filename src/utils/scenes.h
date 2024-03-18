@@ -28,9 +28,13 @@ void quads(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void monkey(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
-void single_scratch(
-	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
-
 }  // namespace scenes::book_two
+
+namespace scenes::scratches {
+void close(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+void far(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+}  // namespace scenes::scratches
 
 #endif
