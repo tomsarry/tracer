@@ -326,11 +326,14 @@ void quads(
 	cam.defocus_angle = 0;
 }
 
-void monkey(
+}  // namespace scenes::book_two
+
+namespace scenes::scratches {
+void single(
 	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	// Materials
-	auto monkey_texture = std::make_shared<image_texture>("monkey.png");
-	auto monkey_surface = std::make_shared<lambertian>(monkey_texture);
+	auto texture = std::make_shared<image_texture>("scratch_3.png");
+	auto surface = std::make_shared<lambertian>(texture);
 	auto left_red = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
 	auto back_green = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
 	auto right_blue = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
@@ -346,7 +349,7 @@ void monkey(
 	world.add(std::make_shared<quad>(
 		point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
 	world.add(std::make_shared<quad>(
-		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), monkey_surface));
+		point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), surface));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;
@@ -361,9 +364,32 @@ void monkey(
 
 	cam.defocus_angle = 0;
 }
-}  // namespace scenes::book_two
 
-namespace scenes::scratches {
+void monkey(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	// Materials
+	auto texture = std::make_shared<image_texture>(
+		"monkey.png", orange, magenta, 4, 4, point2(0, 0));
+	auto surface = std::make_shared<lambertian>(texture);
+
+	// Quads
+	world.add(std::make_shared<quad>(
+		point3(-2, -2, 0), vec3(4, 0, 0), vec3(0, 4, 0), surface));
+
+	cam.aspect_ratio = 1.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+
+	cam.vertical_fov = 60;
+	cam.look_from = point3(0, 0, 6);
+	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
 void close(
 	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	// Materials

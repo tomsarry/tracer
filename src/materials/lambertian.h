@@ -24,6 +24,8 @@ class lambertian : public material {
 		if (scatter_direction.near_zero()) scatter_direction = rec.normal;
 
 		scattered = ray(rec.p, scatter_direction, r_in.time());
+		// albedo.hasValue(u,v) -> albedo.value
+		// alb2.value
 		attenuation = albedo->value(rec.u, rec.v, rec.p);
 		return true;
 	}

@@ -26,11 +26,13 @@ void earth(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void quads(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
-void monkey(
-	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 }  // namespace scenes::book_two
 
 namespace scenes::scratches {
+void monkey(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+void single(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void close(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void far(
