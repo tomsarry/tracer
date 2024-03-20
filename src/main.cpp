@@ -1,5 +1,6 @@
 #include <curses.h>
 
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -120,11 +121,16 @@ int main() {
 	camera cam;
 	const auto BVH = true;
 
-	scenes::scratches::far(world, cam, 256, 25);
+	auto start = std::chrono::high_resolution_clock::now();
 
+	scenes::scratches::close(world, cam, 128, 25);
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
-
 	one_shot_render(cam, world);
+
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration =
+		std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	std::clog << "Execution time: " << duration.count() << "ms" << std::endl;
 
 	return 0;
 }
