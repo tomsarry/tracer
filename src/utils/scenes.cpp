@@ -369,7 +369,7 @@ void monkey(
 	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	// Materials
 	auto texture = std::make_shared<image_texture>(
-		"monkey.png", orange, magenta, 4, 4, point2(0, 0));
+		"scratch_3.png", orange, magenta, 8, 1, point2(0, 0));
 	auto surface = std::make_shared<lambertian>(texture);
 
 	// Quads

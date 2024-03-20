@@ -3,6 +3,7 @@
 
 #include "textures/image_asset.h"
 #include "textures/texture.h"
+#include "utils/color.h"
 #include "utils/interval.h"
 #include "utils/point2.h"
 
@@ -39,9 +40,11 @@ class image_texture : public texture {
 		auto pixel = image.pixel_data(i, j);
 
 		auto color_scale = 1.0 / 255.0;
-		return color(
+		auto pixel_color = color(
 			color_scale * pixel[0], color_scale * pixel[1],
 			color_scale * pixel[2]);
+
+		return lerp(pixel_color);
 	}
 
    private:
@@ -50,6 +53,10 @@ class image_texture : public texture {
 	color scratch_color;
 	int scaleX, scaleY;
 	point2 start;
+
+	color lerp(const color& pixel_color) const {
+		return (background_color - scratch_color) * pixel_color + scratch_color;
+	}
 };
 
 #endif
