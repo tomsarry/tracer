@@ -1,6 +1,9 @@
 #include "scenes.h"
 
+#include <memory>
+
 #include "materials/dielectric.h"
+#include "materials/diffuse_light.h"
 #include "materials/iridescent.h"
 #include "materials/lambertian.h"
 #include "materials/metal.h"
@@ -509,12 +512,16 @@ void complex(
 		point3(-2, -2, 5), vec3(4, 0, 0), vec3(0, 4, 0),
 		std::make_shared<lambertian>(checker)));
 	// bottom
-	// world.add(std::make_shared<quad>(
-	// 	point3(-2, -2, 1), vec3(0, 0, 4), vec3(4, 0, 0), red));
+	world.add(std::make_shared<quad>(
+		point3(-2, -2, 1), vec3(0, 0, 4), vec3(4, 0, 0),
+		std::make_shared<lambertian>(checker)));
 
 	// cube -- front
 	world.add(std::make_shared<quad>(
 		point3(.25, -.5, -.25), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+
+	auto light = std::make_shared<diffuse_light>(color(10, 10, 10));
+	// world.add(std::make_shared<sphere>(point3(0, -.4, 0), .1, light));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;

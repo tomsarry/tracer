@@ -1,5 +1,6 @@
 set(SOURCES
     dielectric.h
+    diffuse_light.h
     iridescent.h
     lambertian.h
     material.h

@@ -16,6 +16,7 @@ class camera : public copyable<camera> {
 	int image_height;
 	int samples_per_pixel = 10;
 	int max_depth = 10;
+	color background = color(.7, .8, 1);
 
 	double vertical_fov = 90;
 	point3 look_from = point3(0, 0, -1);
@@ -156,16 +157,19 @@ class camera : public copyable<camera> {
 		if (depth <= 0) return color(0, 0, 0);
 
 		hit_record rec;
-		if (world->hit(r, interval(0.001, Constants::INF), rec)) {
-			ray scattered;
-			color attenuation;
-			if (rec.mat->scatter(r, rec, attenuation, scattered))
-				return attenuation * ray_color(scattered, depth - 1, world);
+		if (!world->hit(r, interval(0.001, Constants::INF), rec))
+			return background;
 
-			return color(0, 0, 0);
-		}
+		ray scattered;
+		color attenuation;
+		color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+		if (!rec.mat->scatter(r, rec, attenuation, scattered))
+			return color_from_emission;
 
-		return background_color(r);
+		color color_from_scatter =
+			attenuation * ray_color(scattered, depth - 1, world);
+
+		return color_from_emission + color_from_scatter;
 	}
 
 	color background_color(const ray& r) {
