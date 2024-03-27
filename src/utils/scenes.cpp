@@ -4,6 +4,7 @@
 #include "materials/iridescent.h"
 #include "materials/lambertian.h"
 #include "materials/metal.h"
+#include "materials/scratched_metal.h"
 #include "objects/hittable_list.h"
 #include "objects/quad.h"
 #include "objects/sphere.h"
@@ -11,6 +12,7 @@
 #include "textures/image_texture.h"
 #include "textures/scratch_texture.h"
 #include "utils/point2.h"
+#include "utils/vec3.h"
 
 namespace {
 color magenta{1, 0, 1};
@@ -368,8 +370,14 @@ void single(
 void monkey(
 	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
 	// Materials
+	std::vector<placement_info> placements;
+	// placements.emplace_back(16, 2, point2(.3, .2));
+	// placements.emplace_back(16, 2, point2(.3, .3));
+	placements.emplace_back(16, 2, point2(.3, .4));
+	placements.emplace_back(16, 2, point2(.3, .0));
+
 	auto texture = std::make_shared<image_texture>(
-		"scratch_3.png", orange, magenta, 8, 1, point2(0, 0));
+		"scratch_3.png", orange, magenta, placements);
 	auto surface = std::make_shared<lambertian>(texture);
 
 	// Quads
@@ -476,6 +484,47 @@ void far(
 	cam.vertical_fov = 80;
 	cam.look_from = point3(0, 0, 9);
 	cam.look_at = point3(0, 0, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
+void complex(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	// Materials
+	auto red = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
+	auto blue = std::make_shared<lambertian>(color(.2, 0.2, 1));
+	auto met = std::make_shared<metal>(color(.8, .8, .8), .1);
+
+	auto checker = std::make_shared<checker_texture>(
+		0.2, color(.1, .1, .1), color(.9, .9, .9));
+
+	placement_info info{1, 1, point2(.0, .0)};
+
+	auto smet =
+		std::make_shared<scratched_metal>(color(1, 1, 1), 0, "1024.png", info);
+
+	// back
+	world.add(std::make_shared<quad>(
+		point3(-2, -2, 5), vec3(4, 0, 0), vec3(0, 4, 0),
+		std::make_shared<lambertian>(checker)));
+	// bottom
+	// world.add(std::make_shared<quad>(
+	// 	point3(-2, -2, 1), vec3(0, 0, 4), vec3(4, 0, 0), red));
+
+	// cube -- front
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, -.25), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+
+	cam.aspect_ratio = 1.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+
+	cam.vertical_fov = 40;
+	cam.look_from = point3(0, -.2, -1.);
+	cam.look_at = point3(0, -.5, 0);
 	cam.vertical_up = vec3(0, 1, 0);
 
 	cam.defocus_angle = 0;

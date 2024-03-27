@@ -123,7 +123,7 @@ int main() {
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	scenes::scratches::monkey(world, cam, 32, 10);
+	scenes::scratches::complex(world, cam, 64, 16);
 	if (BVH) world = hittable_list(std::make_shared<bvh_node>(world));
 	one_shot_render(cam, world);
 

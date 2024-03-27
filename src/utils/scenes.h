@@ -37,6 +37,8 @@ void close(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 void far(
 	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
+void complex(
+	hittable_list& world, camera& cam, int samples_per_pixel, int max_depth);
 }  // namespace scenes::scratches
 
 #endif
