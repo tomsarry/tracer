@@ -55,7 +55,7 @@ class scratched_metal : public material {
 		vec3 B(0, 0, 1);
 		vec3 N(0, 1, 0);
 
-		auto normal = ((color / 255.) - vec3(0.5, 0.5, 0.5)) * 2;
+		auto normal = ((color / 256.) - vec3(0.5, 0.5, 0.5)) * 2;
 
 		auto x = dot(T, normal);
 		auto y = dot(B, normal);
