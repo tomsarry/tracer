@@ -504,8 +504,8 @@ void complex(
 
 	placement_info info{1, 1, point2(.0, .0)};
 
-	auto smet =
-		std::make_shared<scratched_metal>(color(1, 1, 1), 0, "1024.png", info);
+	auto smet = std::make_shared<scratched_metal>(
+		color(1, 1, 1), 0, "1024_normal.png", info);
 
 	// back
 	world.add(std::make_shared<quad>(
@@ -521,7 +521,7 @@ void complex(
 		point3(.25, -.5, -.25), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
 
 	auto light = std::make_shared<diffuse_light>(color(10, 10, 10));
-	// world.add(std::make_shared<sphere>(point3(0, -.4, 0), .1, light));
+	world.add(std::make_shared<sphere>(point3(0, -.4, 0), .1, light));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;

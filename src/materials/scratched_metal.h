@@ -22,7 +22,8 @@ class scratched_metal : public material {
 		vec3 normal = rec.normal;
 
 		if (shouldPerturbNormal(rec)) {
-			normal = unit_vector(vec3(.1, 1, 0));
+			normal = unit_vector(perturbNormal(rec));
+			// normal = unit_vector(vec3(.1, 1, 0));
 		}
 
 		vec3 reflected = reflect(unit_vector(r_in.direction()), normal);
@@ -38,8 +39,34 @@ class scratched_metal : public material {
 	image_asset image;
 	placement_info placement;
 
+	vec3 perturbNormal(const hit_record& rec) const {
+		auto u = interval(0, 1).clamp(rec.u - placement.start.x);
+		auto v = interval(0, 1).clamp(rec.v - placement.start.y);
+
+		auto i = static_cast<int>(placement.scaleX * u * image.width()) %
+				 image.width();
+		auto j = static_cast<int>(placement.scaleY * v * image.height()) %
+				 image.height();
+		auto pixel = image.pixel_data(i, j);
+
+		vec3 color(pixel[0], pixel[1], pixel[2]);
+
+		vec3 T(-1, 0, 0);
+		vec3 B(0, 0, 1);
+		vec3 N(0, 1, 0);
+
+		auto normal = ((color / 255.) - vec3(0.5, 0.5, 0.5)) * 2;
+
+		auto x = dot(T, normal);
+		auto y = dot(B, normal);
+		auto z = dot(N, normal);
+
+		return vec3(x, y, z);
+	}
+
 	bool shouldPerturbNormal(const hit_record& rec) const {
 		if (is_outside_of_image(rec.u, rec.v, placement)) return false;
+		return true;
 
 		auto u = interval(0, 1).clamp(rec.u - placement.start.x);
 		auto v = interval(0, 1).clamp(rec.v - placement.start.y);
