@@ -502,7 +502,9 @@ void complex(
 	auto checker = std::make_shared<checker_texture>(
 		0.2, color(.1, .1, .1), color(.9, .9, .9));
 
-	placement_info info{1, 1, point2(.0, .0)};
+	// scale2: 1024 * 4 = 4k
+	// scale4: 1024 * 16 = 16k
+	placement_info info{4, 4, point2(.0, .0)};
 
 	auto smet = std::make_shared<scratched_metal>(
 		color(1, 1, 1), 0, "1024_normal.png", info);
