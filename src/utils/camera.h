@@ -78,6 +78,9 @@ class camera : public copyable<camera> {
 
 			for (int i = 0; i < image_width; ++i) {
 				color pixel_color(0, 0, 0);
+				// todo: get bounding rays
+
+				// todo: fill hit_record with size of kernel or u,v coordinates
 				for (int sample = 0; sample < samples_per_pixel; ++sample) {
 					ray r = get_ray(i, j);
 					pixel_color += ray_color(r, max_depth, world);
@@ -128,6 +131,10 @@ class camera : public copyable<camera> {
 		defocus_disk_u = u * defocus_radius;
 		defocus_disk_v = v * defocus_radius;
 	}
+
+	// todo: get_bounding_rays(int i, int j)
+	// send rays from vertices of pixel
+	// shoot them use 1 level
 
 	ray get_ray(int i, int j) {
 		auto pixel_center =

@@ -508,7 +508,7 @@ void complex(
 
 	// 2048 * 4 = 8k
 	// 2048 * 9 = 18k
-	placement_info info{4, 4, point2(.0, .0)};
+	placement_info info{2, 2, point2(.0, .0)};
 	auto repeat = true;
 
 	auto smet = std::make_shared<scratched_metal>(

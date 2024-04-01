@@ -46,6 +46,12 @@ class vec3 {
 
 	vec3 &operator/=(double t) { return *this *= 1 / t; }
 
+	bool operator==(const vec3 &other) {
+		return e[0] == other[0] && e[1] == other[1] && e[2] == other[2];
+	}
+
+	bool operator!=(const vec3 &other) { return !(*this == other); }
+
 	double length() const { return std::sqrt(length_squared()); }
 
 	double length_squared() const {
