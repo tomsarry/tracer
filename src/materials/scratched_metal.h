@@ -9,8 +9,13 @@
 class scratched_metal : public material {
    public:
 	scratched_metal(
-		const color& a, double f, const char* filename, placement_info& i)
-		: albedo(a), fuzz(f < 1 ? f : 1), image(filename), placement(i) {}
+		const color& a, double f, const char* filename, placement_info& i,
+		bool r)
+		: albedo(a),
+		  fuzz(f < 1 ? f : 1),
+		  image(filename),
+		  placement(i),
+		  repeat(r) {}
 
 	std::shared_ptr<material> deep_copy() const noexcept override {
 		return std::make_shared<scratched_metal>(*this);
@@ -23,14 +28,13 @@ class scratched_metal : public material {
 
 		if (shouldPerturbNormal(rec)) {
 			normal = unit_vector(perturbNormal(rec));
-			// normal = unit_vector(vec3(.1, 1, 0));
 		}
 
 		vec3 reflected = reflect(unit_vector(r_in.direction()), normal);
 		scattered =
 			ray(rec.p, reflected + fuzz * random_unit_vector(), r_in.time());
 		attenuation = albedo;
-		return dot(scattered.direction(), rec.normal) > 0;
+		return dot(scattered.direction(), normal) > 0;
 	}
 
    private:
@@ -38,6 +42,7 @@ class scratched_metal : public material {
 	double fuzz;
 	image_asset image;
 	placement_info placement;
+	bool repeat;
 
 	vec3 perturbNormal(const hit_record& rec) const {
 		auto u = interval(0, 1).clamp(rec.u - placement.start.x);
@@ -65,19 +70,9 @@ class scratched_metal : public material {
 	}
 
 	bool shouldPerturbNormal(const hit_record& rec) const {
-		if (is_outside_of_image(rec.u, rec.v, placement)) return false;
-		return true;
-
-		auto u = interval(0, 1).clamp(rec.u - placement.start.x);
-		auto v = interval(0, 1).clamp(rec.v - placement.start.y);
-
-		auto i = static_cast<int>(placement.scaleX * u * image.width()) %
-				 image.width();
-		auto j = static_cast<int>(placement.scaleY * v * image.height()) %
-				 image.height();
-		auto pixel = image.pixel_data(i, j);
-
-		return pixel[0] == 0;
+		if (repeat) return true;
+		if (!is_outside_of_image(rec.u, rec.v, placement)) return true;
+		return false;
 	}
 
 	bool is_outside_of_image(
