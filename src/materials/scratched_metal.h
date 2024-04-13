@@ -4,6 +4,7 @@
 #include "materials/material.h"
 #include "objects/hittable.h"
 #include "textures/image_texture.h"
+#include "utils/constants.h"
 #include "utils/random.h"
 #include "utils/vec3.h"
 
@@ -62,11 +63,11 @@ class scratched_metal : public material {
 		vec3 color(pixel[0], pixel[1], pixel[2]);
 
 		const auto radius{1};
-		auto interesting = getCloseScratchTexels(i, j, radius);
+		auto interesting = getClosestScratchTexels(i, j, radius);
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
-		if (color != outward_normal && !interesting.empty()) {
+		if (color == outward_normal && !interesting.empty()) {
 			color = interesting[random_int(0, interesting.size() - 1)];
 		}
 
@@ -98,6 +99,38 @@ class scratched_metal : public material {
 				auto texel = image.pixel_data(i, j);
 				color c(texel[0], texel[1], texel[2]);
 				if (c != outward_normal) results.emplace_back(c);
+			}
+		}
+
+		return results;
+	}
+
+	std::vector<color> getClosestScratchTexels(int i, int j, int radius) const {
+		std::vector<color> results;
+		auto minDistance = Constants::INF;
+
+		// enumerate coordinates of neighbours
+		// square kernel, might overlap other neighbour pixels
+		for (int ni = i - radius; ni < i + radius; ++ni) {
+			for (int nj = j - radius; nj < j + radius; ++nj) {
+				int i = ni % image.width();
+				int j = nj % image.height();
+
+				// store "interesting" normal
+				auto texel = image.pixel_data(i, j);
+				color c(texel[0], texel[1], texel[2]);
+
+				// todo: replace with euclidean distance?
+				auto manhattan_distance = abs(ni - i) + abs(nj - j);
+				if (c != outward_normal) {
+					if (minDistance == manhattan_distance)
+						results.emplace_back(c);
+
+					if (minDistance > manhattan_distance) {
+						results = {c};
+						minDistance = manhattan_distance;
+					}
+				}
 			}
 		}
 
