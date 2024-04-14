@@ -508,7 +508,7 @@ void complex(
 
 	// 2048 * 4 = 8k
 	// 2048 * 9 = 18k
-	placement_info info{4, 4, point2(.0, .0)};
+	placement_info info{2, 2, point2(.0, .0)};
 	auto repeat = true;
 
 	auto smet = std::make_shared<scratched_metal>(
@@ -534,6 +534,62 @@ void complex(
 
 	// left light
 	world.add(std::make_shared<sphere>(point3(0.35, -.3, 0), .1, light));
+
+	cam.aspect_ratio = 1.0;
+	cam.image_width = 400;
+	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
+	cam.samples_per_pixel = samples_per_pixel;
+	cam.max_depth = max_depth;
+
+	cam.vertical_fov = 40;
+	cam.look_from = point3(0, -.2, -1.);
+	cam.look_at = point3(0, -.5, 0);
+	cam.vertical_up = vec3(0, 1, 0);
+
+	cam.defocus_angle = 0;
+}
+
+void complex2(
+	hittable_list &world, camera &cam, int samples_per_pixel, int max_depth) {
+	// Materials
+	auto blue = std::make_shared<lambertian>(color(.2, 0.2, 1));
+	auto met = std::make_shared<metal>(color(.8, .8, .8), .1);
+
+	// scale2: 1024 * 4 = 4k
+	// scale2: 1024 * 9 = 9k
+	// scale4: 1024 * 16 = 16k
+
+	// 2048 * 4 = 8k
+	// 2048 * 9 = 18k
+	placement_info info{4, 4, point2(.0, .0)};
+	auto repeat = true;
+
+	auto smet = std::make_shared<scratched_metal>(
+		color(.4, .4, 1), .3, "1024_normal.png", info, repeat);
+
+	// scratched metal
+	// front
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, -1), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, -.50), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, 0), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, .50), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, 1), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	world.add(std::make_shared<quad>(
+		point3(.25, -.5, 1.50), vec3(-.5, 0, 0), vec3(0, 0, .5), smet));
+	// back
+
+	auto light = std::make_shared<diffuse_light>(color(10, 10, 10));
+
+	world.add(std::make_shared<sphere>(point3(-0.45, -.3, 0), .1, light));
+	world.add(std::make_shared<sphere>(point3(0.45, -.3, 0), .1, light));
+
+	world.add(std::make_shared<sphere>(point3(-0.55, -.3, 1.5), .1, light));
+	world.add(std::make_shared<sphere>(point3(0.55, -.3, 1.5), .1, light));
 
 	cam.aspect_ratio = 1.0;
 	cam.image_width = 400;

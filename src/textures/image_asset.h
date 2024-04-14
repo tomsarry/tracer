@@ -18,6 +18,12 @@ class image_asset {
 
 		auto filepath = imagedir + '/' + filename;
 		if (load(filepath)) return;
+		if (load("../assets/" + filename)) return;
+		if (load("../../assets/" + filename)) return;
+		if (load("../../../assets/" + filename)) return;
+		if (load("../../../../assets/" + filename)) return;
+		if (load("../../../../../assets/" + filename)) return;
+		if (load("../../../../../../assets/" + filename)) return;
 
 		std::cerr << "ERROR: Could not load image file '" << filepath << ".\n";
 	}

@@ -10,7 +10,14 @@
 
 namespace {
 color outward_normal(128, 128, 255);
-}
+}  // namespace
+
+struct kernel {
+	int top_left_i;
+	int top_left_j;
+	int bottom_right_i;
+	int bottom_right_j;
+};
 
 class scratched_metal : public material {
    public:
@@ -51,6 +58,32 @@ class scratched_metal : public material {
 	bool repeat;
 
 	vec3 perturbNormal(const hit_record& rec) const {
+		auto top_left_u =
+			interval(0, 1).clamp(rec.top_left.x - placement.start.x);
+		auto top_left_v =
+			interval(0, 1).clamp(rec.top_left.y - placement.start.y);
+		auto top_left_i =
+			static_cast<int>(placement.scaleX * top_left_u * image.width()) %
+			image.width();
+		auto top_left_j =
+			static_cast<int>(placement.scaleY * top_left_v * image.height()) %
+			image.height();
+
+		auto bottom_right_u =
+			interval(0, 1).clamp(rec.bottom_right.x - placement.start.x);
+		auto bottom_right_v =
+			interval(0, 1).clamp(rec.bottom_right.y - placement.start.y);
+		auto bottom_right_i =
+			static_cast<int>(
+				placement.scaleX * bottom_right_u * image.width()) %
+			image.width();
+		auto bottom_right_j =
+			static_cast<int>(
+				placement.scaleY * bottom_right_v * image.height()) %
+			image.height();
+
+		kernel k{top_left_i, top_left_j, bottom_right_i, bottom_right_j};
+
 		auto u = interval(0, 1).clamp(rec.u - placement.start.x);
 		auto v = interval(0, 1).clamp(rec.v - placement.start.y);
 
@@ -63,7 +96,7 @@ class scratched_metal : public material {
 		vec3 color(pixel[0], pixel[1], pixel[2]);
 
 		const auto radius{1};
-		auto interesting = getClosestScratchTexels(i, j, radius);
+		auto interesting = getClosestScratchTexels(i, j, radius, k);
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
@@ -105,14 +138,20 @@ class scratched_metal : public material {
 		return results;
 	}
 
-	std::vector<color> getClosestScratchTexels(int i, int j, int radius) const {
+	std::vector<color> getClosestScratchTexels(
+		int i, int j, int radius, const kernel& k) const {
 		std::vector<color> results;
 		auto minDistance = Constants::INF;
 
+		auto kernel_size = (k.bottom_right_i - k.top_left_i) *
+						   (k.top_left_j - k.bottom_right_j);
+		// todo: think of this edge case
+		if (kernel_size <= 0) return results;
+
 		// enumerate coordinates of neighbours
 		// square kernel, might overlap other neighbour pixels
-		for (int ni = i - radius; ni < i + radius; ++ni) {
-			for (int nj = j - radius; nj < j + radius; ++nj) {
+		for (int ni = k.top_left_i; ni <= k.bottom_right_i; ++ni) {
+			for (int nj = k.bottom_right_j; nj <= k.top_left_j; ++nj) {
 				int i = ni % image.width();
 				int j = nj % image.height();
 

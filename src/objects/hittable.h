@@ -6,6 +6,7 @@
 #include "objects/aabb.h"
 #include "utils/copyable.h"
 #include "utils/interval.h"
+#include "utils/point2.h"
 #include "utils/ray.h"
 
 class material;
@@ -15,6 +16,8 @@ class hit_record {
 	point3 p;
 	vec3 normal;
 	std::shared_ptr<material> mat;
+	point2 top_left;
+	point2 bottom_right;
 	double t;
 	double u, v;
 	bool front_face;

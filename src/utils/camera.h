@@ -6,6 +6,7 @@
 #include "utils/color.h"
 #include "utils/constants.h"
 #include "utils/pixel_map.h"
+#include "utils/point2.h"
 #include "utils/random.h"
 #include "utils/vec3.h"
 
@@ -78,12 +79,40 @@ class camera : public copyable<camera> {
 
 			for (int i = 0; i < image_width; ++i) {
 				color pixel_color(0, 0, 0);
-				// todo: get bounding rays
+				auto rays = get_bounding_rays(i, j);
 
-				// todo: fill hit_record with size of kernel or u,v coordinates
+				// only take direct rays
+				// ignore material for now
+				hit_record rec;
+				rec.u = 0;
+				rec.v = 0;
+				get_bounding_uv(rays.at(0), world, rec);
+				point2 top_left{rec.u, rec.v};
+
+				rec.u = 0;
+				rec.v = 0;
+				get_bounding_uv(rays.at(1), world, rec);
+				point2 bottom_left{rec.u, rec.v};
+
+				rec.u = 0;
+				rec.v = 0;
+				get_bounding_uv(rays.at(2), world, rec);
+				point2 top_right{rec.u, rec.v};
+
+				rec.u = 0;
+				rec.v = 0;
+				get_bounding_uv(rays.at(3), world, rec);
+				point2 bottom_right{rec.u, rec.v};
+
 				for (int sample = 0; sample < samples_per_pixel; ++sample) {
 					ray r = get_ray(i, j);
-					pixel_color += ray_color(r, max_depth, world);
+
+					// pass info about pixel footprint
+					hit_record rec;
+					rec.top_left = top_left;
+					rec.bottom_right = bottom_right;
+
+					pixel_color += ray_color(r, max_depth, world, rec);
 				}
 
 				pixels[j][i] += pixel_color;
@@ -132,9 +161,32 @@ class camera : public copyable<camera> {
 		defocus_disk_v = v * defocus_radius;
 	}
 
-	// todo: get_bounding_rays(int i, int j)
 	// send rays from vertices of pixel
 	// shoot them use 1 level
+
+	std::vector<ray> get_bounding_rays(int i, int j) {
+		std::vector<ray> result;
+
+		auto pixel_center =
+			pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
+
+		auto top_left_corner =
+			pixel_center - 0.5 * pixel_delta_u - 0.5 * pixel_delta_v;
+		auto top_right_corner =
+			pixel_center + 0.5 * pixel_delta_u - 0.5 * pixel_delta_v;
+		auto bottom_right_corner =
+			pixel_center + 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
+		auto bottom_left_corner =
+			pixel_center - 0.5 * pixel_delta_u + 0.5 * pixel_delta_v;
+
+		// ignore defocus angle and ray rime
+		result.emplace_back(center, top_left_corner - center, 0);
+		result.emplace_back(center, bottom_left_corner - center, 0);
+		result.emplace_back(center, top_right_corner - center, 0);
+		result.emplace_back(center, bottom_right_corner - center, 0);
+
+		return result;
+	}
 
 	ray get_ray(int i, int j) {
 		auto pixel_center =
@@ -160,12 +212,16 @@ class camera : public copyable<camera> {
 	}
 
 	color ray_color(
-		const ray& r, int depth, const std::shared_ptr<hittable>& world) {
+		const ray& r, int depth, const std::shared_ptr<hittable>& world,
+		hit_record& rec2) {
 		if (depth <= 0) return color(0, 0, 0);
 
 		hit_record rec;
 		if (!world->hit(r, interval(0.001, Constants::INF), rec))
 			return background;
+
+		rec.top_left = rec2.top_left;
+		rec.bottom_right = rec2.bottom_right;
 
 		ray scattered;
 		color attenuation;
@@ -174,9 +230,15 @@ class camera : public copyable<camera> {
 			return color_from_emission;
 
 		color color_from_scatter =
-			attenuation * ray_color(scattered, depth - 1, world);
+			attenuation * ray_color(scattered, depth - 1, world, rec);
 
 		return color_from_emission + color_from_scatter;
+	}
+
+	// gets info about uv coordinates of first ray intersection
+	void get_bounding_uv(
+		const ray& r, const std::shared_ptr<hittable>& world, hit_record& rec) {
+		world->hit(r, interval(0.001, Constants::INF), rec);
 	}
 
 	color background_color(const ray& r) {
