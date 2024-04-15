@@ -1,6 +1,8 @@
 #ifndef SCRATCHED_METAL_H
 #define SCRATCHED_METAL_H
 
+#include <random>
+
 #include "materials/material.h"
 #include "objects/hittable.h"
 #include "textures/image_texture.h"
@@ -95,13 +97,17 @@ class scratched_metal : public material {
 
 		vec3 color(pixel[0], pixel[1], pixel[2]);
 
-		const auto radius{1};
-		auto interesting = getClosestScratchTexels(i, j, radius, k);
+		// const auto radius{1};
+		// auto interesting = getClosestScratchTexels(i, j, radius, k);
+		// todo: cache results
+		std::vector<vec3> normals;
+		std::vector<double> weights;
+		getWeightedScratchTexels(i, j, k, normals, weights);
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
-		if (color == outward_normal && !interesting.empty()) {
-			color = interesting[random_int(0, interesting.size() - 1)];
+		if (color == outward_normal && !normals.empty()) {
+			color = selectNewNormal(normals, weights);
 		}
 
 		vec3 T(-1, 0, 0);
@@ -115,6 +121,95 @@ class scratched_metal : public material {
 		auto z = dot(N, normal);
 
 		return vec3(x, y, z);
+	}
+
+	vec3 selectNewNormal(
+		const std::vector<vec3>& normals,
+		const std::vector<double>& weights) const {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::discrete_distribution<> d(weights.begin(), weights.end());
+
+		auto selected = d(gen);
+
+		return normals.at(selected);
+	}
+
+	int manhattanDistance(int ni, int i, int nj, int j) const {
+		return abs(ni - i) + abs(nj - j);
+	}
+
+	// get the relative importance of `neighborNormal`,
+	// this will translate in a probability of picking that vector to replace
+	// `normal`
+	double computeWeight(int distance, vec3 normal, vec3 neighborNormal) const {
+		// todo: what default values?
+		if (distance == 0) return 1.0;
+
+		auto dotProduct = dot(unit_vector(normal), unit_vector(neighborNormal));
+
+		if (dotProduct < 0.0) {
+			std::clog << "Warning: nve dotproduct on: " << normal << " and "
+					  << neighborNormal << " (" << dotProduct << ")"
+					  << std::endl;
+			return 0.0;
+		}
+
+		const auto epsilon = .0001;
+		const auto orientationFactor =
+			(1.0 / (dotProduct * dotProduct)) - (1.0 - epsilon);
+		const auto distanceFactor = 1.0 / sqrt(distance);
+
+		// std::cout << "distance / orientation: {" << distanceFactor << ","
+		// 		  << orientationFactor << "}" << std::endl;
+
+		return distanceFactor * orientationFactor;
+	}
+
+	void getWeightedScratchTexels(
+		int i, int j, const kernel& k, std::vector<vec3>& normals,
+		std::vector<double>& weights) const {
+		std::vector<std::pair<color, double>> results;
+
+		auto minDistance = Constants::INF;
+
+		auto kernel_size = (k.bottom_right_i - k.top_left_i) *
+						   (k.top_left_j - k.bottom_right_j);
+		// todo: think of this edge case
+		if (kernel_size <= 0) return;
+
+		auto outward_normal_weight = 0.0;
+		auto rest_weights = 0.0;
+
+		// enumerate coordinates of neighbours
+		// square kernel, might overlap other neighbour pixels
+		for (int ni = k.top_left_i; ni <= k.bottom_right_i; ++ni) {
+			for (int nj = k.bottom_right_j; nj <= k.top_left_j; ++nj) {
+				int new_i = ni % image.width();
+				int new_j = nj % image.height();
+
+				// store "interesting" normal
+				auto texel = image.pixel_data(new_i, new_j);
+				color c(texel[0], texel[1], texel[2]);
+
+				auto distance = manhattanDistance(i, new_i, j, new_j);
+
+				auto weight = computeWeight(distance, outward_normal, c);
+
+				if (c == outward_normal) {
+					outward_normal_weight += weight;
+				} else {
+					normals.emplace_back(c);
+					weights.emplace_back(weight);
+					rest_weights += weight;
+				}
+			}
+		}
+
+		if (outward_normal_weight != 0) {
+			normals.emplace_back(outward_normal);
+			weights.emplace_back(outward_normal_weight);
+		}
 	}
 
 	// get normals from "interesting" texels around a radius from initial texel
@@ -160,14 +255,13 @@ class scratched_metal : public material {
 				color c(texel[0], texel[1], texel[2]);
 
 				// todo: replace with euclidean distance?
-				auto manhattan_distance = abs(ni - i) + abs(nj - j);
+				auto distance = manhattanDistance(ni, i, nj, j);
 				if (c != outward_normal) {
-					if (minDistance == manhattan_distance)
-						results.emplace_back(c);
+					if (minDistance == distance) results.emplace_back(c);
 
-					if (minDistance > manhattan_distance) {
+					if (minDistance > distance) {
 						results = {c};
-						minDistance = manhattan_distance;
+						minDistance = distance;
 					}
 				}
 			}
