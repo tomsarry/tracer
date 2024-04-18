@@ -13,7 +13,7 @@ class diffuse_light : public material {
 
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
-		ray& scattered) const override {
+		ray& scattered) override {
 		return false;
 	}
 

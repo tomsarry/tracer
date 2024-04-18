@@ -7,7 +7,6 @@
 #include "objects/hittable.h"
 #include "textures/image_texture.h"
 #include "utils/constants.h"
-#include "utils/random.h"
 #include "utils/vec3.h"
 
 namespace {
@@ -38,7 +37,7 @@ class scratched_metal : public material {
 
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
-		ray& scattered) const override {
+		ray& scattered) override {
 		vec3 normal = rec.normal;
 
 		if (shouldPerturbNormal(rec)) {
@@ -58,8 +57,11 @@ class scratched_metal : public material {
 	image_asset image;
 	placement_info placement;
 	bool repeat;
+	std::pair<point2, point2> cached_footprint{};
+	std::vector<vec3> cached_normals{};
+	std::vector<double> cached_weights{};
 
-	vec3 perturbNormal(const hit_record& rec) const {
+	vec3 perturbNormal(const hit_record& rec) {
 		auto top_left_u =
 			interval(0, 1).clamp(rec.top_left.x - placement.start.x);
 		auto top_left_v =
@@ -97,12 +99,23 @@ class scratched_metal : public material {
 
 		vec3 color(pixel[0], pixel[1], pixel[2]);
 
-		// const auto radius{1};
-		// auto interesting = getClosestScratchTexels(i, j, radius, k);
-		// todo: cache results
+		const auto radius{1};
+		auto interesting = getClosestScratchTexels(i, j, radius, k);
+
 		std::vector<vec3> normals;
 		std::vector<double> weights;
-		getWeightedScratchTexels(i, j, k, normals, weights);
+		// if (rec.top_left == cached_footprint.first &&
+		// 	rec.bottom_right == cached_footprint.second) {
+		// 	normals = cached_normals;
+		// 	weights = cached_weights;
+		// } else {
+		// 	getWeightedScratchTexels(i, j, k, normals, weights);
+		// 	cached_normals = normals;
+		// 	cached_weights = weights;
+		// 	cached_footprint = std::make_pair(rec.top_left, rec.bottom_right);
+		// }
+
+		// getWeightedScratchTexels(i, j, k, normals, weights);
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
@@ -148,22 +161,19 @@ class scratched_metal : public material {
 
 		auto dotProduct = dot(unit_vector(normal), unit_vector(neighborNormal));
 
-		if (dotProduct < 0.0) {
+		if (dotProduct <= 0.0) {
 			std::clog << "Warning: nve dotproduct on: " << normal << " and "
 					  << neighborNormal << " (" << dotProduct << ")"
 					  << std::endl;
 			return 0.0;
 		}
 
-		const auto epsilon = .0001;
+		const auto epsilon = 1;
 		const auto orientationFactor =
 			(1.0 / (dotProduct * dotProduct)) - (1.0 - epsilon);
-		const auto distanceFactor = 1.0 / sqrt(distance);
+		const auto distanceFactor = 1.0 / (distance * distance);
 
-		// std::cout << "distance / orientation: {" << distanceFactor << ","
-		// 		  << orientationFactor << "}" << std::endl;
-
-		return distanceFactor * orientationFactor;
+		return distanceFactor + orientationFactor;
 	}
 
 	void getWeightedScratchTexels(

@@ -15,7 +15,7 @@ class iridescent : public material {
 
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
-		ray& scattered) const override {
+		ray& scattered) override {
 		if (mate) return mate_scatter(r_in, rec, attenuation, scattered);
 		return shiny_scatter(r_in, rec, attenuation, scattered);
 	}

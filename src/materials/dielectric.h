@@ -14,7 +14,7 @@ class dielectric : public material {
 
 	bool scatter(
 		const ray& r_in, const hit_record& rec, color& attenuation,
-		ray& scattered) const override {
+		ray& scattered) override {
 		attenuation = color(1.0, 1.0, 1.0);
 		double refraction_ratio =
 			rec.front_face ? (1.0 / refraction_index) : refraction_index;
