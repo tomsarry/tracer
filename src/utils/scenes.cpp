@@ -508,11 +508,11 @@ void complex(
 
 	// 2048 * 4 = 8k
 	// 2048 * 9 = 18k
-	placement_info info{2, 2, point2(.0, .0)};
+	placement_info info{4, 4, point2(.0, .0)};
 	auto repeat = true;
 
 	auto smet = std::make_shared<scratched_metal>(
-		color(.4, .4, 1), .3, "1024_normal.png", info, repeat);
+		color(.4, .4, 1), .1, "1024_normal.png", info, repeat);
 
 	// back
 	world.add(std::make_shared<quad>(
@@ -530,13 +530,13 @@ void complex(
 	auto light = std::make_shared<diffuse_light>(color(10, 10, 10));
 
 	// right light
-	world.add(std::make_shared<sphere>(point3(-0.35, -.3, 0), .1, light));
+	world.add(std::make_shared<sphere>(point3(-0.35, -.3, 0.1), .1, light));
 
 	// left light
-	world.add(std::make_shared<sphere>(point3(0.35, -.3, 0), .1, light));
+	world.add(std::make_shared<sphere>(point3(0.35, -.3, -0.1), .1, light));
 
 	cam.aspect_ratio = 1.0;
-	cam.image_width = 400;
+	cam.image_width = 600;
 	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
 	cam.samples_per_pixel = samples_per_pixel;
 	cam.max_depth = max_depth;
@@ -565,7 +565,7 @@ void complex2(
 	auto repeat = true;
 
 	auto smet = std::make_shared<scratched_metal>(
-		color(.4, .4, 1), .3, "1024_normal.png", info, repeat);
+		color(.4, .4, 1), .1, "1024_normal.png", info, repeat);
 
 	// scratched metal
 	// front
@@ -592,7 +592,7 @@ void complex2(
 	world.add(std::make_shared<sphere>(point3(0.55, -.3, 1.5), .1, light));
 
 	cam.aspect_ratio = 1.0;
-	cam.image_width = 400;
+	cam.image_width = 600;
 	cam.image_height = static_cast<int>(cam.image_width / cam.aspect_ratio);
 	cam.samples_per_pixel = samples_per_pixel;
 	cam.max_depth = max_depth;

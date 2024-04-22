@@ -102,26 +102,26 @@ class scratched_metal : public material {
 		// const auto radius{3};
 		// auto interesting = getClosestScratchTexels(i, j, radius);
 
-		// std::vector<vec3> normals;
-		// std::vector<double> weights;
-		// if (rec.top_left == cached_footprint.first &&
-		// 	rec.bottom_right == cached_footprint.second) {
-		// 	normals = cached_normals;
-		// 	weights = cached_weights;
-		// } else {
-		// 	getWeightedScratchTexels(i, j, k, normals, weights);
-		// 	cached_normals = normals;
-		// 	cached_weights = weights;
-		// 	cached_footprint = std::make_pair(rec.top_left, rec.bottom_right);
-		// }
+		std::vector<vec3> normals;
+		std::vector<double> weights;
+		if (rec.top_left == cached_footprint.first &&
+			rec.bottom_right == cached_footprint.second) {
+			normals = cached_normals;
+			weights = cached_weights;
+		} else {
+			getWeightedScratchTexels(i, j, k, normals, weights);
+			cached_normals = normals;
+			cached_weights = weights;
+			cached_footprint = std::make_pair(rec.top_left, rec.bottom_right);
+		}
 
 		// getWeightedScratchTexels(i, j, k, normals, weights);
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
-		// if (color == outward_normal && !interesting.empty()) {
-		// 	color = interesting[random_int(0, interesting.size() - 1)];
-		// }
+		if (color == outward_normal && !normals.empty()) {
+			color = selectNewNormal(normals, weights);
+		}
 
 		vec3 T(-1, 0, 0);
 		vec3 B(0, 0, 1);
