@@ -99,11 +99,11 @@ class scratched_metal : public material {
 
 		vec3 color(pixel[0], pixel[1], pixel[2]);
 
-		const auto radius{1};
-		auto interesting = getClosestScratchTexels(i, j, radius, k);
+		// const auto radius{3};
+		// auto interesting = getClosestScratchTexels(i, j, radius);
 
-		std::vector<vec3> normals;
-		std::vector<double> weights;
+		// std::vector<vec3> normals;
+		// std::vector<double> weights;
 		// if (rec.top_left == cached_footprint.first &&
 		// 	rec.bottom_right == cached_footprint.second) {
 		// 	normals = cached_normals;
@@ -119,9 +119,9 @@ class scratched_metal : public material {
 
 		// if did not touch a scratch and there is a neighbouring scratch,
 		// pick at random a new normal
-		if (color == outward_normal && !normals.empty()) {
-			color = selectNewNormal(normals, weights);
-		}
+		// if (color == outward_normal && !interesting.empty()) {
+		// 	color = interesting[random_int(0, interesting.size() - 1)];
+		// }
 
 		vec3 T(-1, 0, 0);
 		vec3 B(0, 0, 1);
@@ -243,8 +243,38 @@ class scratched_metal : public material {
 		return results;
 	}
 
+	std::vector<color> getClosestScratchTexels(int i, int j, int radius) const {
+		std::vector<color> results;
+		auto minDistance = Constants::INF;
+
+		// enumerate coordinates of neighbours
+		// square kernel, might overlap other neighbour pixels
+		for (int ni = i - radius; ni < i + radius; ++ni) {
+			for (int nj = j - radius; nj < j + radius; ++nj) {
+				int i = ni % image.width();
+				int j = nj % image.height();
+
+				// store "interesting" normal
+				auto texel = image.pixel_data(i, j);
+				color c(texel[0], texel[1], texel[2]);
+
+				auto distance = manhattanDistance(ni, i, nj, j);
+				if (c != outward_normal) {
+					if (distance == minDistance) results.emplace_back(c);
+
+					if (distance < minDistance) {
+						results = {c};
+						minDistance = distance;
+					}
+				}
+			}
+		}
+
+		return results;
+	}
+
 	std::vector<color> getClosestScratchTexels(
-		int i, int j, int radius, const kernel& k) const {
+		int i, int j, const kernel& k) const {
 		std::vector<color> results;
 		auto minDistance = Constants::INF;
 
